@@ -75,7 +75,7 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     '''
     guidelines for region selection:
 
-    x: t0<a<b<c<d<e<f<g<h<i<t1,
+    x: t0<a<b<d<c<e<g<f<h<i<t1,
     1 < g-c < 2 #to keep nub from being too small
     
 
@@ -88,42 +88,59 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
 
     pointsx = []
     pointsx.append(t0x)
+    pointsx.append(uniform((distance * 0.05), distance * 0.15)) #a
+    pointsx.append(uniform((distance * 0.15), distance * 0.3)) #b
+    pointsx.append(uniform((distance * 0.3), distance * 0.4)) #d
+    pointsx.append(uniform((distance * 0.4), distance * 0.45)) #c
+    pointsx.append(uniform((distance * 0.45), distance * 0.55)) #e
+    pointsx.append(uniform((distance * 0.55), distance * 0.6)) #g
+    pointsx.append(uniform((distance * 0.65), distance * 0.7)) #f
+    pointsx.append(uniform((distance * 0.7), distance * 0.85)) #h
+    pointsx.append(uniform((distance * 0.85), distance * 0.95)) #i
     pointsx.append(t1x)
-    for i in range(9):
-        pointsx.append(uniform(t0x, t1x))
-    pointsx.sort()
 
-    
+
+
     pointsy = []
+    maxheight = distance * 0.5
     pointsy.append(t0y)
     pointsy.append(t1y)
-    for i in range(9):
-        pointsy.append(uniform(0, (t1x - t0x)/3))
-    pointsy.sort()
-    
+    pointsy.append(uniform(0, maxheight * 0.1)) #b
+    pointsy.append(uniform(0, maxheight * 0.1)) #h
+    pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4)) #i
+    pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4)) #a
+    pointsy.append(uniform((maxheight * 0.4), maxheight * 0.5)) #c
+    pointsy.append(uniform((maxheight * 0.4), maxheight * 0.5)) #g
+    pointsy.append(uniform((maxheight * 0.5), maxheight * 0.65)) #d
+    pointsy.append(uniform((maxheight * 0.5), maxheight * 0.65))#f
+    pointsy.append(uniform((maxheight * 0.7), maxheight * 1)) #e
 
-    a = (1,1)
-    b = (3,0)
-    c = (4,1.5)
-    d = (3.75,3)
-    e = (5,4.5)
-    f = (6.25,3)
-    g = (6,1.5)
-    h = (7,0)
-    i = (9,1)
     
-    # a = (pointsx[1], pointsy[4])
-    # b = (pointsx[2], pointsy[2])
-    # d = (pointsx[3], pointsy[9])
-    # c = (pointsx[4], pointsy[6])
-    # e = (pointsx[5], pointsy[10])
-    # g = (pointsx[6], pointsy[7])
-    # f = (pointsx[7], pointsy[8])
-    # h = (pointsx[8], pointsy[3])
-    # i = (pointsx[9], pointsy[5])
+    # a = (1,1)
+    # b = (3,0)
+    # c = (4,1.5)
+    # d = (3.75,3)
+    # e = (5,4.5)
+    # f = (6.25,3)
+    # g = (6,1.5)
+    # h = (7,0)
+    # i = (9,1)
+    
+    a = (pointsx[1], pointsy[4])
+    b = (pointsx[2], pointsy[2])
+    d = (pointsx[3], pointsy[9])
+    c = (pointsx[4], pointsy[6])
+    e = (pointsx[5], pointsy[10])
+    g = (pointsx[6], pointsy[7])
+    f = (pointsx[7], pointsy[8])
+    h = (pointsx[8], pointsy[3])
+    i = (pointsx[9], pointsy[5])
+
+
+
 
     #region (t0, a)
-    x, y = bezierQuad(t0,(( (a[0]-t0[0])/2 , a[1] )), a) #mx is variable
+    x, y = bezierCubic(t0,((xmid(t0, a)), xmid(t0, a)),(( (a[0]-t0[0])/2 , a[1] )), a)
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
@@ -186,7 +203,11 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     puzzle.append((x, y))
 
     #region (i, t1)
-    x, y = bezierQuad(i,((xmid(i, t1),(i[1]))), t1) #mx is variable
+    x, y = bezierCubic(i,  (xmid(i, t1)  , (i[1])), (xmid(i, t1), t1[0] - xmid(i, t1) ),  t1) #mx is variable
+    print("failpoint: ", (xmid(i, t1), xmid(i, t1)))
+    print("entrypoints: ", i, t1)
+
+
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
@@ -218,7 +239,7 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
 
 
 def puzzleMaker(lineset):
-    seed = 0 
+    seed = 1 
     for line in lineset:
         puzzleCurve(line[0], line[1], seed)
         seed += 1
@@ -227,5 +248,7 @@ def puzzleMaker(lineset):
 
 lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)]]
 # lines = [[(1,0), (0, 0)]]
+# lines = [[(0,0), (10, 0)]]
+
 puzzleMaker(lines)
 
