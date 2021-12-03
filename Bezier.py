@@ -2,7 +2,7 @@ from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
 from math import pi, sqrt
-from random import uniform, seed
+from random import uniform, seed, shuffle
 
 
 '''
@@ -143,7 +143,8 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     #generate bezier curves by region
 
     #region (t0, a)
-    x, y = bezierCubic(t0, (a[1]/2, a[1]/2)  ,  (a[1] , a[1] ),   a) # ISSUES 
+    # mx, my are variable, but must be along line y=x, and mx, my < a[1] 
+    x, y = bezierCubic(t0, (a[1]/2, a[1]/2)  ,  (a[1] , a[1] ),   a) 
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
@@ -209,26 +210,18 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     
     m = (t1x - i[1], i[1])
     n = (t1x - (i[1]/2), i[1]/2)
-    x, y = bezierCubic(i, m, n, t1) #mx is variable ISSUES
+    x, y = bezierCubic(i, m, n, t1) #mx my are variable (but must be diagonal) and below i[1]
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
     puzzle.append((x, y))
-
-
 
     for region in puzzle:
         plt.plot(region[0], region[1])
 
 
 
-
-
-# for i in range(1):
-#     puzzleCurve((6, 9), (3, 4), i)
-
-
-def puzzleMaker(lineset):
+def curveGen(lineset):
 
     seed = 20
     for line in lineset:
@@ -241,9 +234,27 @@ def puzzleMaker(lineset):
     plt.show()
 
 
-lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
+
+def recGrid(width, height):
+    lines = []
+    #veritcal lines
+    for x in range(width+1):
+        for y in range(height):
+            temp = [(x, y), ((x), y-1)]
+            shuffle(temp)
+            lines.append(temp)
+    #horizontal lines
+    for x in range(width):
+        for y in range(height+1):
+            temp = [(x, y - 1), ((x+1), y - 1)]
+            shuffle(temp)
+            lines.append(temp)
+    return lines
+
+
+# lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
 # lines = [[(1,0), (0, 0)]]
 # lines = [[(0,0), (10, 0)]]
-
-puzzleMaker(lines)
+lines = recGrid(10, 8)
+curveGen(lines)
 
