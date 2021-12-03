@@ -47,7 +47,8 @@ def rotate(x, y, theta):
 def puzzleCurve(t0, t1, inseed = 1, parameters = []):
 
     t0init = t0
-    t1init = t1
+
+    #find angle of line to origin
     if ((t1[0] - t0[0]) == 0 ): 
         if (t0[1] < t1[1]): theta = pi/2
         else: theta = 3*pi/2
@@ -56,22 +57,18 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
         if(t0[0] > t1[0]):
             theta = pi
 
-    print("theta", theta)
+    #construct curve of line length
     distance = (sqrt((t1[0] - t0[0])**2 + (t1[1] - t0[1])**2))
-    print("distance", distance)
     t0 = (0, 0)
     t1 = (distance, 0)
-    
     t0x = t0[0]
     t0y = t0[1]
     t1x = t1[0]
     t1y = t1[1]
-    t = np.arange(0, 1.01, 0.01) 
-    puzzle = []
+
+    puzzle = [] #holds selection of bezier curves
 
 
-    #determine regions:
-    #this will be where a lot of the variation will be
     '''
     guidelines for region selection:
 
@@ -85,7 +82,6 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     
     '''
 
- 
     # seed(inseed)
 
     # pointsx = []
@@ -105,6 +101,7 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
 
     seed(inseed)
 
+    #assign x values for critical points
     pointsx = []
     pointsx.append(t0x)
     pointsx.append(uniform((distance * 0.05), distance * 0.15)) #a
@@ -118,9 +115,9 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     pointsx.append(uniform((distance * 0.85), distance * 0.95)) #i
     pointsx.append(t1x)
 
-
+    #assign y values for critical points
     pointsy = []
-    maxheight = distance * 0.5
+    maxheight = distance * 0.35
     pointsy.append(t0y)
     pointsy.append(t1y)
     pointsy.append(uniform(maxheight * -0.1, maxheight * 0.1)) #b
@@ -133,17 +130,6 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     pointsy.append(uniform((maxheight * 0.4), maxheight * 0.7))#f
     pointsy.append(uniform((maxheight * 0.8), maxheight * 1)) #e
 
-    
-    # a = (1,1)
-    # b = (3,0)
-    # c = (4,1.5)
-    # d = (3.75,3)
-    # e = (5,4.5)
-    # f = (6.25,3)
-    # g = (6,1.5)
-    # h = (7,0)
-    # i = (9,1)
-    
     a = (pointsx[1], pointsy[4])
     b = (pointsx[2], pointsy[2])
     d = (pointsx[3], pointsy[9])
@@ -154,11 +140,10 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     h = (pointsx[8], pointsy[3])
     i = (pointsx[9], pointsy[5])
 
-
-
+    #generate bezier curves by region
 
     #region (t0, a)
-    x, y = bezierCubic(t0,((xmid(t0, a)), xmid(t0, a)),(( (a[0]-t0[0])/2 , a[1] )), a)
+    x, y = bezierCubic(t0, (xmid(t0, a), xmid(t0, a))  ,  (t0x , a[1] ),   a) # ISSUES 
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
@@ -221,33 +206,16 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     puzzle.append((x, y))
 
     #region (i, t1)
-    x, y = bezierCubic(i,  (xmid(i, t1)  , (i[1])), (xmid(i, t1), t1[0] - xmid(i, t1) ),  t1) #mx is variable
-    print("failpoint: ", (xmid(i, t1), xmid(i, t1)))
-    print("entrypoints: ", i, t1)
-
-
+    x, y = bezierCubic(i, (xmid(i, t1) ,(i[1])), (xmid(i, t1), t1[0] - xmid(i, t1) ),  t1) #mx is variable ISSUES
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
     puzzle.append((x, y))
 
-    print("initial point: ")
-    print("(" + str(puzzle[0][0][0])+ ", ", end="")
-    print(str(puzzle[0][1][0])+ ")")
-
-    print("final point: ")
-    print("(" + str(puzzle[-1][0][-1])+ ", ", end="")
-    print(str(puzzle[-1][1][-1]) + ")")
-
-    plt.rcParams["figure.figsize"] = (9, 9)
 
     for region in puzzle:
         plt.plot(region[0], region[1])
-    
-    # plt.plot([t0init[0], t1init[0]], [t0init[1], t1init[1]])
-    # plt.plot(e[0], e[1], marker='o')
-    plt.axis('equal')
-    plt.grid()
+
 
 
 
@@ -257,14 +225,19 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
 
 
 def puzzleMaker(lineset):
-    seed = 1 
+
+    seed = 20
     for line in lineset:
         puzzleCurve(line[0], line[1], seed)
         seed += 1
+
+    plt.rcParams["figure.figsize"] = (9, 9)
+    plt.axis('equal')
+    plt.grid()
     plt.show()
 
 
-lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)]]
+lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
 # lines = [[(1,0), (0, 0)]]
 # lines = [[(0,0), (10, 0)]]
 
