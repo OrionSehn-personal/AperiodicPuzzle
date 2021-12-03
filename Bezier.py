@@ -84,6 +84,25 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     e shouldn't be too high, because it will collide with other puzzle edges. 
     
     '''
+
+ 
+    # seed(inseed)
+
+    # pointsx = []
+    # pointsx.append(t0x)
+    # pointsx.append(t1x)
+    # for i in range(9):
+    #     pointsx.append(uniform(t0x, t1x))
+    # pointsx.sort()
+
+    
+    # pointsy = []
+    # pointsy.append(t0y)
+    # pointsy.append(t1y)
+    # for i in range(9):
+    #     pointsy.append(uniform(0, (t1x - t0x)/3))
+    # pointsy.sort()
+
     seed(inseed)
 
     pointsx = []
@@ -100,20 +119,19 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     pointsx.append(t1x)
 
 
-
     pointsy = []
     maxheight = distance * 0.5
     pointsy.append(t0y)
     pointsy.append(t1y)
-    pointsy.append(uniform(0, maxheight * 0.1)) #b
-    pointsy.append(uniform(0, maxheight * 0.1)) #h
-    pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4)) #i
-    pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4)) #a
-    pointsy.append(uniform((maxheight * 0.4), maxheight * 0.5)) #c
-    pointsy.append(uniform((maxheight * 0.4), maxheight * 0.5)) #g
-    pointsy.append(uniform((maxheight * 0.5), maxheight * 0.65)) #d
-    pointsy.append(uniform((maxheight * 0.5), maxheight * 0.65))#f
-    pointsy.append(uniform((maxheight * 0.7), maxheight * 1)) #e
+    pointsy.append(uniform(maxheight * -0.1, maxheight * 0.1)) #b
+    pointsy.append(uniform(maxheight * -0.1, maxheight * 0.1)) #h
+    pointsy.append(uniform((maxheight * 0.1), maxheight * 0.2)) #i
+    pointsy.append(uniform((maxheight * 0.1), maxheight * 0.2)) #a
+    pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4)) #c
+    pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4)) #g
+    pointsy.append(uniform((maxheight * 0.4), maxheight * 0.7)) #d
+    pointsy.append(uniform((maxheight * 0.4), maxheight * 0.7))#f
+    pointsy.append(uniform((maxheight * 0.8), maxheight * 1)) #e
 
     
     # a = (1,1)
