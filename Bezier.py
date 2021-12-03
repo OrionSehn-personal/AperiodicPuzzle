@@ -104,15 +104,15 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     #assign x values for critical points
     pointsx = []
     pointsx.append(t0x)
-    pointsx.append(uniform((distance * 0.05), distance * 0.15)) #a
-    pointsx.append(uniform((distance * 0.15), distance * 0.3)) #b
-    pointsx.append(uniform((distance * 0.3), distance * 0.4)) #d
+    pointsx.append(uniform((distance * 0.1), distance * 0.15)) #a
+    pointsx.append(uniform((distance * 0.15), distance * 0.35)) #b
+    pointsx.append(uniform((distance * 0.35), distance * 0.4)) #d
     pointsx.append(uniform((distance * 0.4), distance * 0.45)) #c
     pointsx.append(uniform((distance * 0.45), distance * 0.55)) #e
     pointsx.append(uniform((distance * 0.55), distance * 0.6)) #g
-    pointsx.append(uniform((distance * 0.65), distance * 0.7)) #f
-    pointsx.append(uniform((distance * 0.7), distance * 0.85)) #h
-    pointsx.append(uniform((distance * 0.85), distance * 0.95)) #i
+    pointsx.append(uniform((distance * 0.6), distance * 0.65)) #f
+    pointsx.append(uniform((distance * 0.65), distance * 0.85)) #h
+    pointsx.append(uniform((distance * 0.85), distance * 0.90)) #i
     pointsx.append(t1x)
 
     #assign y values for critical points
@@ -143,7 +143,7 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     #generate bezier curves by region
 
     #region (t0, a)
-    x, y = bezierCubic(t0, (xmid(t0, a), xmid(t0, a))  ,  (t0x , a[1] ),   a) # ISSUES 
+    x, y = bezierCubic(t0, (a[1]/2, a[1]/2)  ,  (a[1] , a[1] ),   a) # ISSUES 
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
@@ -206,11 +206,15 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     puzzle.append((x, y))
 
     #region (i, t1)
-    x, y = bezierCubic(i, (xmid(i, t1) ,(i[1])), (xmid(i, t1), t1[0] - xmid(i, t1) ),  t1) #mx is variable ISSUES
+    
+    m = (t1x - i[1], i[1])
+    n = (t1x - (i[1]/2), i[1]/2)
+    x, y = bezierCubic(i, m, n, t1) #mx is variable ISSUES
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
     puzzle.append((x, y))
+
 
 
     for region in puzzle:
