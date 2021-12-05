@@ -44,8 +44,26 @@ def rotate(x, y, theta):
     y = (xcopy * np.sin(theta)) + (ycopy * np.cos(theta))
     return x, y
 
-def puzzleCurve(t0, t1, inseed = 1, parameters = []):
 
+    '''
+    guidelines for region selection:
+
+    x: t0<a<b<d<c<e<g<f<h<i<t1,
+    1 < g-c < 2 #to keep nub from being too small
+    
+
+    #y: t0 = t1, 
+    e > {d ,f } > {c, g, a, i} > {t0, t1, b, h}
+    e shouldn't be too high, because it will collide with other puzzle edges. 
+    
+    '''
+
+def puzzleCurve(t0, t1, inseed = 1, parameters = []):
+    seed(inseed)
+    temp = [t0, t1]
+    shuffle(temp)
+    t0 = temp[0]
+    t1 = temp[1]
     t0init = t0
 
     #find angle of line to origin
@@ -67,22 +85,6 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
     t1y = t1[1]
 
     puzzle = [] #holds selection of bezier curves
-
-
-    '''
-    guidelines for region selection:
-
-    x: t0<a<b<d<c<e<g<f<h<i<t1,
-    1 < g-c < 2 #to keep nub from being too small
-    
-
-    #y: t0 = t1, 
-    e > {d ,f } > {c, g, a, i} > {t0, t1, b, h}
-    e shouldn't be too high, because it will collide with other puzzle edges. 
-    
-    '''
-
-    # seed(inseed)
 
     # pointsx = []
     # pointsx.append(t0x)
@@ -241,7 +243,6 @@ def recGrid(width, height):
     for x in range(width+1):
         for y in range(height):
             temp = [(x, y), ((x), y-1)]
-            shuffle(temp)
             lines.append(temp)
     #horizontal lines
     for x in range(width):
@@ -255,6 +256,6 @@ def recGrid(width, height):
 # lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
 # lines = [[(1,0), (0, 0)]]
 # lines = [[(0,0), (10, 0)]]
-lines = recGrid(10, 8)
+lines = recGrid(6, 4)
 curveGen(lines)
 
