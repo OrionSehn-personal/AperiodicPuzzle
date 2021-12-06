@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import pi, sqrt
 from random import uniform, seed, shuffle
+from fibbonacciTimesFibbonacciSubstitution import *
 
 
 '''
@@ -58,22 +59,48 @@ def rotate(x, y, theta):
     
     '''
 
-def puzzleCurve(t0, t1, inseed = 1, parameters = []):
+def puzzleCurve(t0, t1, inseed = 1, parameters = [], flipTabs = False):
     seed(inseed)
-    temp = [t0, t1]
-    shuffle(temp)
-    t0 = temp[0]
-    t1 = temp[1]
+    if flipTabs:
+        temp = [t0, t1]
+        shuffle(temp)
+        t0 = temp[0]
+        t1 = temp[1]
     t0init = t0
 
     #find angle of line to origin
-    if ((t1[0] - t0[0]) == 0 ): 
-        if (t0[1] < t1[1]): theta = pi/2
-        else: theta = 3*pi/2
-    else: theta = np.arctan((t1[1] - t0[1])/(t1[0] - t0[0]))
-    if (theta == 0):
-        if(t0[0] > t1[0]):
-            theta = pi
+    #by quadrant
+    
+    deltax = t1[0] - t0[0]
+    deltay = t1[1] - t0[1]
+
+    if ((deltax>0) and (deltay>0)): #Q1
+        theta = np.arctan(deltay/deltax)
+    
+    elif ((deltax<0) and (deltay>0)): #Q2
+        theta = pi - np.arctan(-1*deltay/deltax)
+
+    elif ((deltax<0) and (deltay<0)): #Q3
+        theta = pi + np.arctan(deltay/deltax)
+
+    elif ((deltax>0) and (deltay<0)): #Q4
+        theta = (2*pi) - np.arctan(-1*deltay/deltax)
+
+    elif ((deltax>0) and (deltay==0)): #Q1
+        theta = 0
+
+    elif ((deltax<0) and (deltay==0)): #Q1
+        theta = pi
+
+    elif ((deltax==0) and (deltay>0)): #Q1
+        theta = pi/2
+
+    elif ((deltax==0) and (deltay<0)): #Q1
+        theta = 3*pi/2
+
+    elif ((deltax==0) and (deltay==0)): #Q1
+        theta = 0 
+
 
     #construct curve of line length
     distance = (sqrt((t1[0] - t0[0])**2 + (t1[1] - t0[1])**2))
@@ -119,7 +146,7 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
 
     #assign y values for critical points
     pointsy = []
-    maxheight = distance * 0.35
+    maxheight = distance * 0.25
     pointsy.append(t0y)
     pointsy.append(t1y)
     pointsy.append(uniform(maxheight * -0.1, maxheight * 0.1)) #b
@@ -223,11 +250,11 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = []):
 
 
 
-def curveGen(lineset):
+def curveGen(lineset, flipTabs = True):
 
     seed = 20
     for line in lineset:
-        puzzleCurve(line[0], line[1], seed)
+        puzzleCurve(line[0], line[1], seed, flipTabs)
         seed += 1
 
     plt.rcParams["figure.figsize"] = (9, 9)
@@ -256,6 +283,24 @@ def recGrid(width, height):
 # lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
 # lines = [[(1,0), (0, 0)]]
 # lines = [[(0,0), (10, 0)]]
-lines = recGrid(6, 4)
-curveGen(lines)
+# lines = recGrid(6, 4)
+# curveGen(lines)
 
+def test1():
+    lines = penroseLines(6)
+    # drawFromLines(lines)
+    curveGen(lines, flipTabs=False)
+
+test1()
+
+
+def test2():
+    # lines = [[(0,1), (1,0)], [(1,0), (0, -1)], [(0,-1), (-1,0)], [(-1,0), (0, 1)]]
+    # lines = [[(1,0), (0, -1)]]
+
+    # lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
+    # lines = [[(1,0), (0, 0)]]
+    # lines = [[(0,0), (10, 0)]]
+    lines = recGrid(6, 4)
+    curveGen(lines)
+# test2()

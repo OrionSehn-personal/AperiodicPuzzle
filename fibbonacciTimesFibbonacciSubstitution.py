@@ -107,7 +107,35 @@ class Tile:
         lines.append((self.point4, self.point1))
         return lines
 
-def penroseLines(iterations = 5):
+def cleanLines(inList):
+    outList = roundLines(inList)
+    outList = removeDuplicates(outList)
+
+    return outList
+
+def roundLines(inList):
+    outList = []
+    for line in inList:
+        outList.append(((round(line[0][0],8),(round(line[0][1],8))),(round(line[1][0],8),(round(line[1][1],8)))))
+    return outList
+
+
+def removeDuplicates(inList):
+    outLines = inList.copy()
+    for line in inList:
+        if (line[1], line[0]) in outLines:
+            outLines.remove(line)
+    return set(outLines)
+
+# def removeInverted(inList):
+#     outList = inList.copy()
+#     for line in inList:
+#         if (((line[1][0], line[1,1]), (line[0][0], line[0][1])) in 
+        
+
+
+
+def penroseLines(iterations = 2):
     startTile = Tile()
     tileList = [startTile]
 
@@ -122,7 +150,7 @@ def penroseLines(iterations = 5):
     lineList = []
     for tile in tileList:
         lineList.extend(tile.getLines())
-    lineSet = set(lineList)
+    lineSet = cleanLines(lineList)
     return lineSet
 
 # drawFromLines(penroseLines())
