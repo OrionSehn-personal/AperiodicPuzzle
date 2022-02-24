@@ -259,7 +259,7 @@ def curveGen(lineset, flipTabs = True):
 
     plt.rcParams["figure.figsize"] = (9, 9)
     plt.axis('equal')
-    plt.grid()
+    # plt.grid()
     plt.show()
 
 
@@ -287,20 +287,46 @@ def recGrid(width, height):
 # curveGen(lines)
 
 def test1():
-    lines = penroseLines(6)
+    lines = penroseLines(7)
     # drawFromLines(lines)
     curveGen(lines, flipTabs=False)
 
-test1()
+# test1()
 
 
 def test2():
     # lines = [[(0,1), (1,0)], [(1,0), (0, -1)], [(0,-1), (-1,0)], [(-1,0), (0, 1)]]
-    # lines = [[(1,0), (0, -1)]]
+    lines = [[(0,0), (10, 0)], [(0,0), (10, 0)], [(0,0), (10, 0)], [(0,0), (10, 0)] ,[(0,0), (10, 0)] ,[(0,0), (10, 0)]]
 
     # lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
     # lines = [[(1,0), (0, 0)]]
     # lines = [[(0,0), (10, 0)]]
-    lines = recGrid(6, 4)
+    # lines = recGrid(6, 4)
     curveGen(lines)
 # test2()
+
+
+
+t0 = (0, 0)
+t1 = (1, 1)
+x, y = bezierQuad(t0, (t1[1]/3, t1[1]) ,   t1) 
+a = np.arange(0, 1, 0.01)
+b = np.empty(100)
+b.fill(1)
+plt.plot(x, y, color="blue")
+plt.plot(a, b, linestyle="dashed", color="orange")
+
+plt.plot(0, 0, marker="o", color="orange")
+plt.plot(t1[1]/3, t1[1], marker="o", color="blue")
+plt.plot(1, 1, marker="o", color="orange")
+
+x, y = bezierQuad(t0, (t1[1]/2, t1[1]) ,   t1) 
+plt.plot(x, y, color="red")
+plt.plot(t1[1]/2, t1[1], marker="o", color="red")
+
+
+x, y = bezierQuad(t0, (t1[1]/8, t1[1]) ,   t1) 
+plt.plot(x, y, color="green")
+plt.plot(t1[1]/8, t1[1], marker="o", color="green")
+
+plt.show()
