@@ -2,9 +2,8 @@ from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
 from math import pi, sqrt
-from random import uniform, seed, shuffle
+from random import uniform, seed, randint
 from fibbonacciTimesFibbonacciSubstitution import *
-
 
 '''
 https://pomax.github.io/bezierinfo/
@@ -62,10 +61,10 @@ def rotate(x, y, theta):
 def puzzleCurve(t0, t1, inseed = 1, parameters = [], flipTabs = False):
     seed(inseed)
     if flipTabs:
-        temp = [t0, t1]
-        shuffle(temp)
-        t0 = temp[0]
-        t1 = temp[1]
+        if randint(0, 1):
+            temp = t0
+            t0 = t1
+            t1 = temp
     t0init = t0
 
     #find angle of line to origin
@@ -133,31 +132,34 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = [], flipTabs = False):
     #assign x values for critical points
     pointsx = []
     pointsx.append(t0x)
-    pointsx.append(uniform((distance * 0.1), distance * 0.15)) #a
-    pointsx.append(uniform((distance * 0.15), distance * 0.35)) #b
-    pointsx.append(uniform((distance * 0.35), distance * 0.4)) #d
-    pointsx.append(uniform((distance * 0.4), distance * 0.45)) #c
-    pointsx.append(uniform((distance * 0.45), distance * 0.55)) #e
-    pointsx.append(uniform((distance * 0.55), distance * 0.6)) #g
-    pointsx.append(uniform((distance * 0.6), distance * 0.65)) #f
-    pointsx.append(uniform((distance * 0.65), distance * 0.85)) #h
-    pointsx.append(uniform((distance * 0.85), distance * 0.90)) #i
+    pointsx.append(uniform((distance * 0.1), distance * 0.15)) #a 5
+    pointsx.append(uniform((distance * 0.20), distance * 0.35)) #b 15
+    pointsx.append(uniform((distance * 0.4), distance * 0.42)) #d 5
+
+    pointsx.append(uniform((distance * 0.42), distance * 0.45)) #c 5
+    pointsx.append(uniform((distance * 0.45), distance * 0.55)) #e 10
+    pointsx.append(uniform((distance * 0.55), distance * 0.58)) #g 5
+
+
+    pointsx.append(uniform((distance * 0.58), distance * 0.6)) #f 5
+    pointsx.append(uniform((distance * 0.65), distance * 0.8)) #h 15
+    pointsx.append(uniform((distance * 0.85), distance * 0.9)) #i 5
     pointsx.append(t1x)
 
     #assign y values for critical points
     pointsy = []
-    maxheight = distance * 0.25
+    maxheight = distance * 0.20
     pointsy.append(t0y)
     pointsy.append(t1y)
-    pointsy.append(uniform(maxheight * -0.1, maxheight * 0.1)) #b
-    pointsy.append(uniform(maxheight * -0.1, maxheight * 0.1)) #h
+    pointsy.append(uniform(maxheight * -0.10, maxheight * 0.05)) #b
+    pointsy.append(uniform(maxheight * -0.10, maxheight * 0.05)) #h
     pointsy.append(uniform((maxheight * 0.1), maxheight * 0.2)) #i
     pointsy.append(uniform((maxheight * 0.1), maxheight * 0.2)) #a
     pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4)) #c
     pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4)) #g
-    pointsy.append(uniform((maxheight * 0.4), maxheight * 0.7)) #d
-    pointsy.append(uniform((maxheight * 0.4), maxheight * 0.7))#f
-    pointsy.append(uniform((maxheight * 0.8), maxheight * 1)) #e
+    pointsy.append(uniform((maxheight * 0.50), maxheight * 0.80)) #d
+    pointsy.append(uniform((maxheight * 0.50), maxheight * 0.80))#f
+    pointsy.append(uniform((maxheight * 0.9), maxheight * 1)) #e
 
     a = (pointsx[1], pointsy[4])
     b = (pointsx[2], pointsy[2])
@@ -172,12 +174,15 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = [], flipTabs = False):
     #generate bezier curves by region
 
     #region (t0, a)
+    minimum_angle = pi/10
+    minimum_slope = np.tan(minimum_angle)
     # mx, my are variable, but must be along line y=x, and mx, my < a[1] 
-    x, y = bezierCubic(t0, (a[1]/2, a[1]/2)  ,  (a[1] , a[1] ),   a) 
+    x, y = bezierCubic(t0, (a[1]/(2*minimum_slope), a[1]/2)  ,  (a[1]/minimum_slope , a[1]),   a) 
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
     puzzle.append((x, y))
+    # plt.plot([0, 10], [0, 7.26])
 
     #region (a, b)
     x, y = bezierCubic(a, (xmid(a,b), a[1]), (xmid(a,b), b[1]), b ) #mx , nx are variable
@@ -237,13 +242,16 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = [], flipTabs = False):
 
     #region (i, t1)
     
-    m = (t1x - i[1], i[1])
-    n = (t1x - (i[1]/2), i[1]/2)
+    m = (t1x - (i[1]/minimum_slope), i[1])
+    n = (t1x - (i[1]/(2*minimum_slope)), i[1]/2)
+
     x, y = bezierCubic(i, m, n, t1) #mx my are variable (but must be diagonal) and below i[1]
     x, y = rotate(x, y, theta)
     x = x + t0init[0]
     y = y + t0init[1]
     puzzle.append((x, y))
+
+    # plt.plot([10,0], [0, 7.26])
 
     for region in puzzle:
         plt.plot(region[0], region[1])
@@ -252,9 +260,9 @@ def puzzleCurve(t0, t1, inseed = 1, parameters = [], flipTabs = False):
 
 def curveGen(lineset, flipTabs = True):
 
-    seed = 20
+    seed = 0
     for line in lineset:
-        puzzleCurve(line[0], line[1], seed, flipTabs)
+        puzzleCurve(line[0], line[1], seed, flipTabs = flipTabs)
         seed += 1
 
     plt.rcParams["figure.figsize"] = (9, 9)
@@ -287,11 +295,11 @@ def recGrid(width, height):
 # curveGen(lines)
 
 def test1():
-    lines = penroseLines(7)
+    lines = penroseLines(2)
     # drawFromLines(lines)
-    curveGen(lines, flipTabs=False)
+    curveGen(lines, flipTabs=True)
 
-# test1()
+test1()
 
 
 def test2():
@@ -302,31 +310,32 @@ def test2():
     # lines = [[(1,0), (0, 0)]]
     # lines = [[(0,0), (10, 0)]]
     # lines = recGrid(6, 4)
-    curveGen(lines)
+    curveGen(lines, flipTabs=False)
+
 # test2()
 
 
 
-t0 = (0, 0)
-t1 = (1, 1)
-x, y = bezierQuad(t0, (t1[1]/3, t1[1]) ,   t1) 
-a = np.arange(0, 1, 0.01)
-b = np.empty(100)
-b.fill(1)
-plt.plot(x, y, color="blue")
-plt.plot(a, b, linestyle="dashed", color="orange")
+# t0 = (0, 0)
+# t1 = (1, 1)
+# x, y = bezierQuad(t0, (t1[1]/3, t1[1]) ,   t1) 
+# a = np.arange(0, 1, 0.01)
+# b = np.empty(100)
+# b.fill(1)
+# plt.plot(x, y, color="blue")
+# plt.plot(a, b, linestyle="dashed", color="orange")
 
-plt.plot(0, 0, marker="o", color="orange")
-plt.plot(t1[1]/3, t1[1], marker="o", color="blue")
-plt.plot(1, 1, marker="o", color="orange")
+# plt.plot(0, 0, marker="o", color="orange")
+# plt.plot(t1[1]/3, t1[1], marker="o", color="blue")
+# plt.plot(1, 1, marker="o", color="orange")
 
-x, y = bezierQuad(t0, (t1[1]/2, t1[1]) ,   t1) 
-plt.plot(x, y, color="red")
-plt.plot(t1[1]/2, t1[1], marker="o", color="red")
+# x, y = bezierQuad(t0, (t1[1]/2, t1[1]) ,   t1) 
+# plt.plot(x, y, color="red")
+# plt.plot(t1[1]/2, t1[1], marker="o", color="red")
 
 
-x, y = bezierQuad(t0, (t1[1]/8, t1[1]) ,   t1) 
-plt.plot(x, y, color="green")
-plt.plot(t1[1]/8, t1[1], marker="o", color="green")
+# x, y = bezierQuad(t0, (t1[1]/8, t1[1]) ,   t1) 
+# plt.plot(x, y, color="green")
+# plt.plot(t1[1]/8, t1[1], marker="o", color="green")
 
-plt.show()
+# plt.show()

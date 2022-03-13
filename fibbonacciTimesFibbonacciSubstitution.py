@@ -1,3 +1,4 @@
+from tracemalloc import start
 from typing import List
 from matplotlib import lines
 import matplotlib.pyplot as plt
@@ -124,6 +125,20 @@ class Tile:
         lines.append((self.point4, self.point1))
         return lines
 
+    def rotate(self, theta):
+        def rotate_point(x, y, theta):
+            xcopy = x
+            ycopy = y
+            x = (xcopy * np.cos(theta)) - (ycopy * np.sin(theta)) # rotate to theta
+            y = (xcopy * np.sin(theta)) + (ycopy * np.cos(theta))
+            return x, y
+        point1 = rotate_point(self.point1[0], self.point1[1], theta)
+        point2 = rotate_point(self.point2[0], self.point2[1], theta)
+        point3 = rotate_point(self.point3[0], self.point3[1], theta)
+        point4 = rotate_point(self.point4[0], self.point4[1], theta)
+        return Tile(point1, point2, point3, point4, subtype = self.subtype)
+
+
 def cleanLines(inList):
     outList = roundLines(inList)
     outList = removeDuplicates(outList)
@@ -152,9 +167,13 @@ def removeDuplicates(inList):
 
 
 
-def penroseLines(iterations = 2):
+def penroseLines(iterations = 3):
     startTile = Tile()
     tileList = [startTile]
+    for i in range(5):
+        startTile = startTile.rotate(2*pi/5)
+        tileList.append(startTile)
+
 
     for i in range(iterations):
         newlist = []
@@ -164,10 +183,14 @@ def penroseLines(iterations = 2):
             tile.inflate((sqrt(5)/2)+(1/2))
         tileList = newlist
 
+    
+
     lineList = []
     for tile in tileList:
         lineList.extend(tile.getLines())
     lineSet = cleanLines(lineList)
     return lineSet
 
-# drawFromLines(penroseLines())
+
+if __name__ == "__main__":
+    drawFromLines(penroseLines(5))
