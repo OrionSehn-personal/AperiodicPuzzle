@@ -62,6 +62,20 @@ def rotate(x, y, theta):
     
     """
 
+def rotate_points(point_list, theta):
+    '''
+    rotates a list of points about the origin by theta'''
+    new_list = []
+    for point in point_list:
+        new_list.append(rotate(point[0], point[1], theta))
+    return new_list
+
+def translate_points(point_list, x, y):
+    '''translates point list by x, y'''
+    new_list = []
+    for point in point_list:
+        new_list.append((point[0] + x, point[1] + y))
+    return new_list
 
 def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     seed(inseed)
@@ -175,94 +189,100 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
 
     # generate bezier curves by region
 
-    # region (t0, a)
     minimum_angle = pi / 10
     minimum_slope = np.tan(minimum_angle)
+
+    # region (t0, a)
+
     # mx, my are variable, but must be along line y=x, and mx, my < a[1]
+    points_t0_a = [t0, (a[1] / (2 * minimum_slope), a[1] / 2), (a[1] / minimum_slope, a[1]), a]
+    points_t0_a = rotate_points(points_t0_a, theta)
+    points_t0_a = translate_points(points_t0_a, t0init[0], t0init[1])
     x, y = bezierCubic(
-        t0, (a[1] / (2 * minimum_slope), a[1] / 2), (a[1] / minimum_slope, a[1]), a
+        points_t0_a[0], points_t0_a[1], points_t0_a[2], points_t0_a[3]
     )
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
+    # x, y = rotate(x, y, theta)
+    # x = x + t0init[0]
+    # y = y + t0init[1]
     puzzle.append((x, y))
+
     # plt.plot([0, 10], [0, 7.26])
 
     # region (a, b)
+
+    points_a_b = [a, (xmid(a, b), a[1]), (xmid(a, b), b[1]), b]
+    points_a_b = rotate_points(points_a_b, theta)
+    points_a_b = translate_points(points_a_b, t0init[0], t0init[1])
     x, y = bezierCubic(
-        a, (xmid(a, b), a[1]), (xmid(a, b), b[1]), b
+        points_a_b[0], points_a_b[1], points_a_b[2], points_a_b[3]
     )  # mx , nx are variable
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
     puzzle.append((x, y))
 
     # region (b, c)
-    x, y = bezierQuad(b, (c[0], b[1]), c)
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
+    points_b_c = [b, (c[0], b[1]), c]
+    points_b_c = rotate_points(points_b_c, theta)
+    points_b_c = translate_points(points_b_c, t0init[0], t0init[1])
+    x, y = bezierQuad(points_b_c[0], points_b_c[1], points_b_c[2])
     puzzle.append((x, y))
 
     # region (c, d)
+    points_c_d = [c, (c[0], ymid(c, d)), (d[0], ymid(c, d)), d]
+    points_c_d = rotate_points(points_c_d, theta)
+    points_c_d = translate_points(points_c_d, t0init[0], t0init[1])
     x, y = bezierCubic(
-        c, (c[0], ymid(c, d)), (d[0], ymid(c, d)), d
+        points_c_d[0], points_c_d[1], points_c_d[2], points_c_d[3]
     )  # my , ny are variable
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
     puzzle.append((x, y))
 
     # region (d, e)
-    x, y = bezierQuad(d, (d[0], e[1]), e)
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
+    points_d_e = [d, (d[0], e[1]), e]
+    points_d_e = rotate_points(points_d_e, theta)
+    points_d_e = translate_points(points_d_e, t0init[0], t0init[1])
+    x, y = bezierQuad(points_d_e[0], points_d_e[1], points_d_e[2])
     puzzle.append((x, y))
 
     # region (e, f)
-    x, y = bezierQuad(e, (f[0], e[1]), f)
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
+    points_e_f = [e, (f[0], e[1]), f]
+    points_e_f = rotate_points(points_e_f, theta)
+    points_e_f = translate_points(points_e_f, t0init[0], t0init[1])
+    x, y = bezierQuad(points_e_f[0], points_e_f[1], points_e_f[2])
     puzzle.append((x, y))
 
     # region (f, g)
+    points_f_g = [f, (f[0], ymid(f, g)), (g[0], ymid(f, g)), g]
+    points_f_g = rotate_points(points_f_g, theta)
+    points_f_g = translate_points(points_f_g, t0init[0], t0init[1])
     x, y = bezierCubic(
-        f, (f[0], ymid(f, g)), (g[0], ymid(f, g)), g
+        points_f_g[0], points_f_g[1], points_f_g[2], points_f_g[3]
     )  # my , ny are variable
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
     puzzle.append((x, y))
 
     # region (g, h)
-    x, y = bezierQuad(g, (g[0], h[1]), h)
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
+    points_g_h = [g, (g[0], h[1]), h]
+    points_g_h = rotate_points(points_g_h, theta)
+    points_g_h = translate_points(points_g_h, t0init[0], t0init[1])
+    x, y = bezierQuad(points_g_h[0], points_g_h[1], points_g_h[2])
     puzzle.append((x, y))
 
     # region (h, i)
+    points_h_i = [h, (xmid(h, i), h[1]), (xmid(h, i), i[1]), i]
+    points_h_i = rotate_points(points_h_i, theta)
+    points_h_i = translate_points(points_h_i, t0init[0], t0init[1])
     x, y = bezierCubic(
-        h, (xmid(h, i), h[1]), (xmid(h, i), i[1]), i
+        points_h_i[0], points_h_i[1], points_h_i[2], points_h_i[3]
     )  # mx , nx are variable
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
     puzzle.append((x, y))
 
     # region (i, t1)
 
     m = (t1x - (i[1] / minimum_slope), i[1])
     n = (t1x - (i[1] / (2 * minimum_slope)), i[1] / 2)
-
+    points_i_t1 = [i, m, n, t1]
+    points_i_t1 = rotate_points(points_i_t1, theta)
+    points_i_t1 = translate_points(points_i_t1, t0init[0], t0init[1])
     x, y = bezierCubic(
-        i, m, n, t1
+        points_i_t1[0], points_i_t1[1], points_i_t1[2], points_i_t1[3]
     )  # mx my are variable (but must be diagonal) and below i[1]
-    x, y = rotate(x, y, theta)
-    x = x + t0init[0]
-    y = y + t0init[1]
     puzzle.append((x, y))
 
     # plt.plot([10,0], [0, 7.26])
@@ -360,3 +380,13 @@ def test2():
 # plt.plot(t1[1]/8, t1[1], marker="o", color="green")
 
 # plt.show()
+
+
+def test3():
+    print("start")
+    point_list = [(0, 1)]
+    print(rotate(0, 1, pi))
+    print(rotate_points(point_list, pi))
+    print("try")
+
+# test3()
