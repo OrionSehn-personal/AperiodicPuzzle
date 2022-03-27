@@ -4,6 +4,7 @@ import numpy as np
 from math import pi, sqrt
 from random import uniform, seed, randint
 from fibbonacciTimesFibbonacciSubstitution import *
+from write_to_svg import *
 
 """
 https://pomax.github.io/bezierinfo/
@@ -77,7 +78,7 @@ def translate_points(point_list, x, y):
         new_list.append((point[0] + x, point[1] + y))
     return new_list
 
-def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
+def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None):
     seed(inseed)
     if flipTabs:
         if randint(0, 1):
@@ -198,6 +199,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_t0_a = [t0, (a[1] / (2 * minimum_slope), a[1] / 2), (a[1] / minimum_slope, a[1]), a]
     points_t0_a = rotate_points(points_t0_a, theta)
     points_t0_a = translate_points(points_t0_a, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_t0_a, svg_file)
     x, y = bezierCubic(
         points_t0_a[0], points_t0_a[1], points_t0_a[2], points_t0_a[3]
     )
@@ -213,6 +216,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_a_b = [a, (xmid(a, b), a[1]), (xmid(a, b), b[1]), b]
     points_a_b = rotate_points(points_a_b, theta)
     points_a_b = translate_points(points_a_b, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_a_b, svg_file)
     x, y = bezierCubic(
         points_a_b[0], points_a_b[1], points_a_b[2], points_a_b[3]
     )  # mx , nx are variable
@@ -222,6 +227,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_b_c = [b, (c[0], b[1]), c]
     points_b_c = rotate_points(points_b_c, theta)
     points_b_c = translate_points(points_b_c, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_b_c, svg_file)
     x, y = bezierQuad(points_b_c[0], points_b_c[1], points_b_c[2])
     puzzle.append((x, y))
 
@@ -229,6 +236,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_c_d = [c, (c[0], ymid(c, d)), (d[0], ymid(c, d)), d]
     points_c_d = rotate_points(points_c_d, theta)
     points_c_d = translate_points(points_c_d, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_c_d, svg_file)
     x, y = bezierCubic(
         points_c_d[0], points_c_d[1], points_c_d[2], points_c_d[3]
     )  # my , ny are variable
@@ -238,6 +247,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_d_e = [d, (d[0], e[1]), e]
     points_d_e = rotate_points(points_d_e, theta)
     points_d_e = translate_points(points_d_e, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_d_e, svg_file)
     x, y = bezierQuad(points_d_e[0], points_d_e[1], points_d_e[2])
     puzzle.append((x, y))
 
@@ -245,6 +256,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_e_f = [e, (f[0], e[1]), f]
     points_e_f = rotate_points(points_e_f, theta)
     points_e_f = translate_points(points_e_f, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_e_f, svg_file)
     x, y = bezierQuad(points_e_f[0], points_e_f[1], points_e_f[2])
     puzzle.append((x, y))
 
@@ -252,6 +265,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_f_g = [f, (f[0], ymid(f, g)), (g[0], ymid(f, g)), g]
     points_f_g = rotate_points(points_f_g, theta)
     points_f_g = translate_points(points_f_g, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_f_g, svg_file)
     x, y = bezierCubic(
         points_f_g[0], points_f_g[1], points_f_g[2], points_f_g[3]
     )  # my , ny are variable
@@ -261,6 +276,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_g_h = [g, (g[0], h[1]), h]
     points_g_h = rotate_points(points_g_h, theta)
     points_g_h = translate_points(points_g_h, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_g_h, svg_file)
     x, y = bezierQuad(points_g_h[0], points_g_h[1], points_g_h[2])
     puzzle.append((x, y))
 
@@ -268,6 +285,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_h_i = [h, (xmid(h, i), h[1]), (xmid(h, i), i[1]), i]
     points_h_i = rotate_points(points_h_i, theta)
     points_h_i = translate_points(points_h_i, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_h_i, svg_file)
     x, y = bezierCubic(
         points_h_i[0], points_h_i[1], points_h_i[2], points_h_i[3]
     )  # mx , nx are variable
@@ -280,6 +299,8 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
     points_i_t1 = [i, m, n, t1]
     points_i_t1 = rotate_points(points_i_t1, theta)
     points_i_t1 = translate_points(points_i_t1, t0init[0], t0init[1])
+    if svg_file != None:
+        draw_curve(points_i_t1, svg_file)
     x, y = bezierCubic(
         points_i_t1[0], points_i_t1[1], points_i_t1[2], points_i_t1[3]
     )  # mx my are variable (but must be diagonal) and below i[1]
@@ -291,11 +312,11 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False):
         plt.plot(region[0], region[1])
 
 
-def curveGen(lineset, flipTabs=True):
+def curveGen(lineset, flipTabs=True, svg_file = None):
 
     seed = 0
     for line in lineset:
-        puzzleCurve(line[0], line[1], seed, flipTabs=flipTabs)
+        puzzleCurve(line[0], line[1], seed, flipTabs=flipTabs, svg_file=svg_file)
         seed += 1
 
     plt.rcParams["figure.figsize"] = (9, 9)
@@ -329,8 +350,11 @@ def recGrid(width, height):
 
 def test1():
     lines = penroseLines(2)
-    # drawFromLines(lines)
-    curveGen(lines, flipTabs=True)
+    filename = "realtry.svg"
+    file = initialize_svg(filename)
+    curveGen(lines, flipTabs=False, svg_file=file)
+    finalize_svg(file)
+    # curveGen(lines, flipTabs=True)
 
 
 test1()
@@ -390,3 +414,12 @@ def test3():
     print("try")
 
 # test3()
+
+def test4():
+    line = [[(0, 0), (10, 0)]]
+    filename = "fivetry.svg"
+    file = initialize_svg(filename)
+    curveGen(line, flipTabs=False, svg_file=file)
+    finalize_svg(file)
+
+# test4()
