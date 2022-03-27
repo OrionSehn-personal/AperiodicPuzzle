@@ -17,7 +17,7 @@ def drawFromLines(lines):
     plt.rcParams["figure.figsize"] = (9, 9)
     plt.axis('equal')
     plt.grid()
-    plt.show()
+    # plt.show()
 
 
 class Tile:
