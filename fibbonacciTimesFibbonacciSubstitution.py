@@ -1,3 +1,4 @@
+from cmath import inf
 from tracemalloc import start
 from typing import List
 from matplotlib import lines
@@ -167,7 +168,7 @@ def removeDuplicates(inList):
 
 
 
-def penroseLines(iterations = 3):
+def penroseLines(iterations = 3, maxradius = inf):
     startTile = Tile()
     tileList = [startTile]
     for i in range(5):
@@ -184,11 +185,28 @@ def penroseLines(iterations = 3):
         tileList = newlist
 
     
+    maxradiussqrd = maxradius*maxradius
+    counter = len(tileList)
+    index = 0
+    while (counter > index):
+        tile = tileList[index] 
+        if(
+            ((tile.point1[0]**2 + tile.point1[1]**2) > maxradiussqrd) or
+            ((tile.point2[0]**2 + tile.point2[1]**2) > maxradiussqrd) or 
+            ((tile.point3[0]**2 + tile.point3[1]**2) > maxradiussqrd) or
+            ((tile.point4[0]**2 + tile.point4[1]**2) > maxradiussqrd)
+            ):
+            tileList.pop(index)
+            counter -=1
+            
+        else:
+            index += 1
 
     lineList = []
     for tile in tileList:
         lineList.extend(tile.getLines())
     lineSet = cleanLines(lineList)
+    print(f"produced {len(tileList)/3} tiles")
     return lineSet
 
 

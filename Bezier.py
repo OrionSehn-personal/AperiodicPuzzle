@@ -268,7 +268,6 @@ def curveGen(lineset, flipTabs = True):
     plt.rcParams["figure.figsize"] = (9, 9)
     plt.axis('equal')
     # plt.grid()
-    plt.show()
 
 
 
@@ -295,11 +294,11 @@ def recGrid(width, height):
 # curveGen(lines)
 
 def test1():
-    lines = penroseLines(2)
+    lines = penroseLines(5, maxradius=17)
     # drawFromLines(lines)
     curveGen(lines, flipTabs=True)
 
-test1()
+# test1()
 
 
 def test2():
@@ -312,6 +311,36 @@ def test2():
     # lines = recGrid(6, 4)
     curveGen(lines, flipTabs=False)
 
+def makePuzzle(radius):
+
+    lines = penroseLines(6, maxradius=radius)
+    # drawFromLines(lines)
+    
+    lines = list(lines)
+    maxradius = radius - (PHI)
+    border = []
+    maxradiussqrd = maxradius*maxradius
+    counter = len(lines)
+    index = 0
+    while (counter > index):
+        line = lines[index] 
+        if(
+            ((line[0][0]**2 + line[0][1]**2) > maxradiussqrd) and
+            ((line[1][0]**2 + line[1][1]**2) > maxradiussqrd)
+            ):
+            border.append(lines.pop(index))
+            counter -=1
+
+        else:
+            index += 1
+
+    curveGen(lines, flipTabs=True)
+    drawFromLines(border)
+    plt.show()
+
+
+
+makePuzzle(17)
 # test2()
 
 
