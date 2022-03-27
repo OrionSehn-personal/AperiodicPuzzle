@@ -33,18 +33,23 @@ def finalize_svg(file):
 
 
 def draw_curve(point_list, file):
-    translation = 10
-    scaling = 70
+    translation = 750
+    scaling = 40
     local_point_list = point_list.copy()
     initial = local_point_list.pop(0)
-    file.write(f"\t<path d=\"M {((initial[0]+translation) * scaling)} {((initial[1]+translation)*scaling)} ")
+    file.write(f"\t<path d=\"M {((initial[0]* scaling) + translation)} {((initial[1]* scaling) + translation)} ")
     if len(local_point_list)==2:
         file.write("Q")
     else:
         file.write("C")
     for point in local_point_list:
-        file.write(f" {((point[0]+translation) * scaling)} {((point[1]+translation) * scaling)},")
+        file.write(f" {((point[0] * scaling) + translation)} {((point[1] * scaling) + translation)},")
     file.write("\" stroke=\"black\" fill=\"transparent\"/>\n")
     return
 
 
+def draw_line(p1, p2, file):
+    translation = 750
+    scaling = 40
+    file.write(f"\t<line x1=\"{p1[0]}\" y1=\"{p1[1]}\" x2=\"{p2[0]}\" y2=\"{p2[1]}\" style=\"stroke:rgb(255,255,255);stroke-width:2\" />\n")
+    return

@@ -376,11 +376,15 @@ def test2():
     # lines = recGrid(6, 4)
     curveGen(lines, flipTabs=False)
 
-def makePuzzle(radius):
+def makePuzzle(radius, svg_filename):
 
     lines = penroseLines(6, maxradius=radius)
     # drawFromLines(lines)
     
+
+    file = initialize_svg(svg_filename)
+
+
     lines = list(lines)
     maxradius = radius - (PHI)
     border = []
@@ -399,13 +403,16 @@ def makePuzzle(radius):
         else:
             index += 1
 
-    curveGen(lines, flipTabs=True)
+    curveGen(lines, flipTabs=True, svg_file=file)
+    for line in border:
+        draw_line(line[0], line[1], file)
+    finalize_svg(file)
     drawFromLines(border)
     plt.show()
 
 
 
-makePuzzle(17)
+makePuzzle(17, "larger.svg")
 # test2()
 
 # test2()
