@@ -51,5 +51,5 @@ def draw_curve(point_list, file):
 def draw_line(p1, p2, file):
     translation = 750
     scaling = 40
-    file.write(f"\t<line x1=\"{p1[0]}\" y1=\"{p1[1]}\" x2=\"{p2[0]}\" y2=\"{p2[1]}\" style=\"stroke:rgb(255,255,255);stroke-width:2\" />\n")
+    file.write(f"\t<line x1=\"{((p1[0] * scaling) + translation)}\" y1=\"{((p1[1]*scaling)+translation)}\" x2=\"{((p2[0]*scaling)+translation)}\" y2=\"{((p2[1]*scaling)+translation)}\" stroke=\"black\" />\n")
     return

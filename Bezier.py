@@ -412,10 +412,8 @@ def makePuzzle(radius, svg_filename):
 
 
 
-makePuzzle(17, "larger.svg")
-# test2()
+makePuzzle(17, "seventeen.svg")
 
-# test2()
 
 
 # t0 = (0, 0)
