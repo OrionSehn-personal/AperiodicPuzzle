@@ -78,6 +78,13 @@ def translate_points(point_list, x, y):
         new_list.append((point[0] + x, point[1] + y))
     return new_list
 
+def linear_transform(x, a, b):
+    '''linearly transforms a value x from 0 to 1, to a value from a to b'''
+    return ((b - a) * x ) + a
+
+def random_puzzle(t0, t1, inseed):
+    return
+
 def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None):
     seed(inseed)
     if flipTabs:
@@ -147,20 +154,25 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
 
     seed(inseed)
 
+
+# assigning as parameters
+
     # assign x values for critical points
     pointsx = []
+
     pointsx.append(t0x)
-    pointsx.append(uniform((distance * 0.1), distance * 0.15))  # a 5
-    pointsx.append(uniform((distance * 0.20), distance * 0.35))  # b 15
-    pointsx.append(uniform((distance * 0.4), distance * 0.42))  # d 5
+    pointsx.append(linear_transform(parameters[0], (distance * 0.1), distance * 0.15))  # a 5
+    pointsx.append(linear_transform(parameters[1], (distance * 0.25), distance * 0.35))  # b 15
+    pointsx.append(linear_transform(parameters[2], (distance * 0.4), distance * 0.42))  # d 5
 
-    pointsx.append(uniform((distance * 0.42), distance * 0.45))  # c 5
-    pointsx.append(uniform((distance * 0.45), distance * 0.55))  # e 10
-    pointsx.append(uniform((distance * 0.55), distance * 0.58))  # g 5
+    pointsx.append(linear_transform(parameters[3], (distance * 0.42), distance * 0.45))  # c 5
+    pointsx.append(linear_transform(parameters[4], (distance * 0.45), distance * 0.55))  # e 10
+    pointsx.append(linear_transform(parameters[5], (distance * 0.55), distance * 0.58))  # g 5
 
-    pointsx.append(uniform((distance * 0.58), distance * 0.6))  # f 5
-    pointsx.append(uniform((distance * 0.65), distance * 0.8))  # h 15
-    pointsx.append(uniform((distance * 0.85), distance * 0.9))  # i 5
+    pointsx.append(linear_transform(parameters[6], (distance * 0.58), distance * 0.6))  # f 5
+    pointsx.append(linear_transform(parameters[7], (distance * 0.65), distance * 0.75))  # h 15
+    pointsx.append(linear_transform(parameters[8], (distance * 0.85), distance * 0.9))  # i 5
+    
     pointsx.append(t1x)
 
     # assign y values for critical points
@@ -168,15 +180,15 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     maxheight = distance * 0.20
     pointsy.append(t0y)
     pointsy.append(t1y)
-    pointsy.append(uniform(maxheight * -0.10, maxheight * 0.05))  # b
-    pointsy.append(uniform(maxheight * -0.10, maxheight * 0.05))  # h
-    pointsy.append(uniform((maxheight * 0.1), maxheight * 0.2))  # i
-    pointsy.append(uniform((maxheight * 0.1), maxheight * 0.2))  # a
-    pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4))  # c
-    pointsy.append(uniform((maxheight * 0.2), maxheight * 0.4))  # g
-    pointsy.append(uniform((maxheight * 0.50), maxheight * 0.80))  # d
-    pointsy.append(uniform((maxheight * 0.50), maxheight * 0.80))  # f
-    pointsy.append(uniform((maxheight * 0.9), maxheight * 1))  # e
+    pointsy.append(linear_transform(parameters[9], maxheight * -0.10, maxheight * 0.05))  # b
+    pointsy.append(linear_transform(parameters[10], maxheight * -0.10, maxheight * 0.05))  # h
+    pointsy.append(linear_transform(parameters[11], maxheight * 0.1, maxheight * 0.2))  # i
+    pointsy.append(linear_transform(parameters[12], maxheight * 0.1, maxheight * 0.2))  # a
+    pointsy.append(linear_transform(parameters[13], maxheight * 0.2, maxheight * 0.4))  # c
+    pointsy.append(linear_transform(parameters[14], maxheight * 0.2, maxheight * 0.4))  # g
+    pointsy.append(linear_transform(parameters[15], maxheight * 0.50, maxheight * 0.80))  # d
+    pointsy.append(linear_transform(parameters[16], maxheight * 0.50, maxheight * 0.80))  # f
+    pointsy.append(linear_transform(parameters[17], maxheight * 0.9, maxheight * 1))  # e
 
     a = (pointsx[1], pointsy[4])
     b = (pointsx[2], pointsy[2])
@@ -412,7 +424,7 @@ def makePuzzle(radius, svg_filename):
 
 
 
-makePuzzle(17, "seventeen.svg")
+# makePuzzle(17, "seventeen.svg")
 
 
 
@@ -441,20 +453,32 @@ makePuzzle(17, "seventeen.svg")
 # plt.show()
 
 
-def test3():
-    print("start")
-    point_list = [(0, 1)]
-    print(rotate(0, 1, pi))
-    print(rotate_points(point_list, pi))
-    print("try")
+# def test3():
+#     print("start")
+#     point_list = [(0, 1)]
+#     print(rotate(0, 1, pi))
+#     print(rotate_points(point_list, pi))
+#     print("try")
 
 # test3()
 
-def test4():
-    line = [[(0, 0), (10, 0)]]
-    filename = "fivetry.svg"
-    file = initialize_svg(filename)
-    curveGen(line, flipTabs=False, svg_file=file)
-    finalize_svg(file)
+# def test4():
+#     line = [[(0, 0), (10, 0)]]
+#     filename = "fivetry.svg"
+#     file = initialize_svg(filename)
+#     curveGen(line, flipTabs=False, svg_file=file)
+#     finalize_svg(file)
 
 # test4()
+
+def test5():
+    
+    parameters = [0] * 18
+    print(f"Puzzle Parameters {parameters}")
+    puzzleCurve((0, 0), (1, 0) , 1, parameters)
+    parameters = [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    print(f"Puzzle Parameters {parameters}")
+    puzzleCurve((0, 0), (1, 0) , 1, parameters)
+    plt.show()
+
+test5()

@@ -17,7 +17,7 @@ def drawFromLines(lines):
     plt.rcParams["figure.figsize"] = (9, 9)
     plt.axis("equal")
     plt.grid()
-    # plt.show()
+    plt.show()
 
 
 class Tile:
@@ -245,4 +245,4 @@ def penroseLines(iterations = 3, maxradius = inf):
 
 
 if __name__ == "__main__":
-    drawFromLines(penroseLines(5))
+    drawFromLines(penroseLines(3))

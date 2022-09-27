@@ -1,4 +1,3 @@
-from turtle import distance
 import pandas as pd
 from random import uniform
 
