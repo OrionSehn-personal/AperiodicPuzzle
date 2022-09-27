@@ -161,7 +161,7 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     pointsx = []
 
     pointsx.append(t0x)
-    pointsx.append(linear_transform(parameters[0], (distance * 0.1), distance * 0.15))  # a 5
+    pointsx.append(linear_transform(parameters[0], (distance * 0.15), distance * 0.2))  # a 5
     pointsx.append(linear_transform(parameters[1], (distance * 0.25), distance * 0.35))  # b 15
     pointsx.append(linear_transform(parameters[2], (distance * 0.4), distance * 0.42))  # d 5
 
@@ -171,7 +171,7 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
 
     pointsx.append(linear_transform(parameters[6], (distance * 0.58), distance * 0.6))  # f 5
     pointsx.append(linear_transform(parameters[7], (distance * 0.65), distance * 0.75))  # h 15
-    pointsx.append(linear_transform(parameters[8], (distance * 0.85), distance * 0.9))  # i 5
+    pointsx.append(linear_transform(parameters[8], (distance * 0.8), distance * 0.85))  # i 5
     
     pointsx.append(t1x)
 
@@ -476,9 +476,14 @@ def test5():
     parameters = [0] * 18
     print(f"Puzzle Parameters {parameters}")
     puzzleCurve((0, 0), (1, 0) , 1, parameters)
-    parameters = [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    parameters = [1] * 18
     print(f"Puzzle Parameters {parameters}")
     puzzleCurve((0, 0), (1, 0) , 1, parameters)
+
+    # parameters = [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    # print(f"Puzzle Parameters {parameters}")
+    # puzzleCurve((0, 0), (1, 0) , 1, parameters)
     plt.show()
 
 test5()
