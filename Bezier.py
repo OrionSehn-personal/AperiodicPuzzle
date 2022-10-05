@@ -424,6 +424,8 @@ def makePuzzle(radius, svg_filename):
 
 
 
+# def uniqueness_metric(params):
+
 # makePuzzle(17, "seventeen.svg")
 
 
@@ -473,17 +475,41 @@ def makePuzzle(radius, svg_filename):
 
 def test5():
     
-    parameters = [0] * 18
-    print(f"Puzzle Parameters {parameters}")
-    puzzleCurve((0, 0), (1, 0) , 1, parameters)
-
-    parameters = [1] * 18
-    print(f"Puzzle Parameters {parameters}")
-    puzzleCurve((0, 0), (1, 0) , 1, parameters)
-
-    # parameters = [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    # parameters = [0] * 18
     # print(f"Puzzle Parameters {parameters}")
     # puzzleCurve((0, 0), (1, 0) , 1, parameters)
+
+    # parameters = [1] * 18
+    # print(f"Puzzle Parameters {parameters}")
+    # puzzleCurve((0, 0), (1, 0) , 1, parameters)
+
+    # parameters = [0] * 18
+    # print(f"Puzzle Parameters {parameters}")
+    # puzzleCurve((0, 0), (1, 0) , 1, parameters)
+
+    # parameters = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    # print(f"Puzzle Parameters {parameters}")
+    # puzzleCurve((0, 0), (1, 0) , 1, parameters)
+
+    parameters = [0.5] * 18
+    print(f"Puzzle Parameters {parameters}")
+    puzzleCurve((0, 0), (1, 0) , 1, parameters)
     plt.show()
 
-test5()
+# test5()
+
+def test6():
+    parameters = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    print(f"Puzzle Parameters {parameters}")
+    puzzleCurve((0, 0), (1, 0) , 1, parameters)
+    for i in range(0, 18):
+        parameters[i] = 1
+        print(f"Puzzle Parameters {parameters}")
+        puzzleCurve((0, 0), (1, 0) , 1, parameters)
+        parameters[i] = 0
+    plt.show()
+
+
+
+
+test6()
