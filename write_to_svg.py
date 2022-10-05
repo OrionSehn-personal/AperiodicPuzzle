@@ -3,11 +3,11 @@
 from threading import local
 
 
-def initialize_svg(svg_filename):
+def initialize_svg(svg_filename, size=1500):
     file = open(svg_filename, "w")
     file.write(
-'''
-<svg width="1500" height="1500" xmlns="http://www.w3.org/2000/svg">
+f'''
+<svg width="{size}" height="{size}" xmlns="http://www.w3.org/2000/svg">
 '''
         )
     file = open(svg_filename, "a")
@@ -32,9 +32,9 @@ def finalize_svg(file):
 
 
 
-def draw_curve(point_list, file):
-    translation = 750
-    scaling = 40
+def draw_curve(point_list, file, size=1500):
+    translation = size/2
+    scaling = size/12
     local_point_list = point_list.copy()
     initial = local_point_list.pop(0)
     file.write(f"\t<path d=\"M {((initial[0]* scaling) + translation)} {((initial[1]* scaling) + translation)} ")
@@ -48,8 +48,8 @@ def draw_curve(point_list, file):
     return
 
 
-def draw_line(p1, p2, file):
-    translation = 750
-    scaling = 40
+def draw_line(p1, p2, file, size=1500):
+    translation = size/2
+    scaling = size/12
     file.write(f"\t<line x1=\"{((p1[0] * scaling) + translation)}\" y1=\"{((p1[1]*scaling)+translation)}\" x2=\"{((p2[0]*scaling)+translation)}\" y2=\"{((p2[1]*scaling)+translation)}\" stroke=\"black\" />\n")
     return

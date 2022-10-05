@@ -206,30 +206,24 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     minimum_slope = np.tan(minimum_angle)
 
     # region (t0, a)
-
     # mx, my are variable, but must be along line y=x, and mx, my < a[1]
     points_t0_a = [t0, (a[1] / (2 * minimum_slope), a[1] / 2), (a[1] / minimum_slope, a[1]), a]
     points_t0_a = rotate_points(points_t0_a, theta)
     points_t0_a = translate_points(points_t0_a, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_t0_a, svg_file)
+        draw_curve(points_t0_a, svg_file, size=size)
     x, y = bezierCubic(
         points_t0_a[0], points_t0_a[1], points_t0_a[2], points_t0_a[3]
     )
-    # x, y = rotate(x, y, theta)
-    # x = x + t0init[0]
-    # y = y + t0init[1]
     puzzle.append((x, y))
-
     # plt.plot([0, 10], [0, 7.26])
 
     # region (a, b)
-
     points_a_b = [a, (xmid(a, b), a[1]), (xmid(a, b), b[1]), b]
     points_a_b = rotate_points(points_a_b, theta)
     points_a_b = translate_points(points_a_b, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_a_b, svg_file)
+        draw_curve(points_a_b, svg_file, size=size)
     x, y = bezierCubic(
         points_a_b[0], points_a_b[1], points_a_b[2], points_a_b[3]
     )  # mx , nx are variable
@@ -240,7 +234,7 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     points_b_c = rotate_points(points_b_c, theta)
     points_b_c = translate_points(points_b_c, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_b_c, svg_file)
+        draw_curve(points_b_c, svg_file, size=size)
     x, y = bezierQuad(points_b_c[0], points_b_c[1], points_b_c[2])
     puzzle.append((x, y))
 
@@ -249,7 +243,7 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     points_c_d = rotate_points(points_c_d, theta)
     points_c_d = translate_points(points_c_d, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_c_d, svg_file)
+        draw_curve(points_c_d, svg_file, size=size)
     x, y = bezierCubic(
         points_c_d[0], points_c_d[1], points_c_d[2], points_c_d[3]
     )  # my , ny are variable
@@ -260,7 +254,7 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     points_d_e = rotate_points(points_d_e, theta)
     points_d_e = translate_points(points_d_e, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_d_e, svg_file)
+        draw_curve(points_d_e, svg_file, size=size)
     x, y = bezierQuad(points_d_e[0], points_d_e[1], points_d_e[2])
     puzzle.append((x, y))
 
@@ -269,7 +263,7 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     points_e_f = rotate_points(points_e_f, theta)
     points_e_f = translate_points(points_e_f, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_e_f, svg_file)
+        draw_curve(points_e_f, svg_file, size=size)
     x, y = bezierQuad(points_e_f[0], points_e_f[1], points_e_f[2])
     puzzle.append((x, y))
 
@@ -278,7 +272,7 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     points_f_g = rotate_points(points_f_g, theta)
     points_f_g = translate_points(points_f_g, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_f_g, svg_file)
+        draw_curve(points_f_g, svg_file, size=size)
     x, y = bezierCubic(
         points_f_g[0], points_f_g[1], points_f_g[2], points_f_g[3]
     )  # my , ny are variable
@@ -289,7 +283,7 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     points_g_h = rotate_points(points_g_h, theta)
     points_g_h = translate_points(points_g_h, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_g_h, svg_file)
+        draw_curve(points_g_h, svg_file, size=size)
     x, y = bezierQuad(points_g_h[0], points_g_h[1], points_g_h[2])
     puzzle.append((x, y))
 
@@ -298,37 +292,35 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
     points_h_i = rotate_points(points_h_i, theta)
     points_h_i = translate_points(points_h_i, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_h_i, svg_file)
+        draw_curve(points_h_i, svg_file, size=size)
     x, y = bezierCubic(
         points_h_i[0], points_h_i[1], points_h_i[2], points_h_i[3]
     )  # mx , nx are variable
     puzzle.append((x, y))
 
     # region (i, t1)
-
     m = (t1x - (i[1] / minimum_slope), i[1])
     n = (t1x - (i[1] / (2 * minimum_slope)), i[1] / 2)
     points_i_t1 = [i, m, n, t1]
     points_i_t1 = rotate_points(points_i_t1, theta)
     points_i_t1 = translate_points(points_i_t1, t0init[0], t0init[1])
     if svg_file != None:
-        draw_curve(points_i_t1, svg_file)
+        draw_curve(points_i_t1, svg_file, size=size)
     x, y = bezierCubic(
         points_i_t1[0], points_i_t1[1], points_i_t1[2], points_i_t1[3]
     )  # mx my are variable (but must be diagonal) and below i[1]
     puzzle.append((x, y))
-
     # plt.plot([10,0], [0, 7.26])
 
     for region in puzzle:
         plt.plot(region[0], region[1])
 
 
-def curveGen(lineset, flipTabs=True, svg_file = None):
+def curveGen(lineset, flipTabs=True, svg_file = None, size=1500):
 
     seed = 0
     for line in lineset:
-        puzzleCurve(line[0], line[1], seed, flipTabs=flipTabs, svg_file=svg_file)
+        puzzleCurve(line[0], line[1], seed, flipTabs=flipTabs, svg_file=svg_file, size=size)
         seed += 1
 
     plt.rcParams["figure.figsize"] = (9, 9)
@@ -388,14 +380,13 @@ def test2():
     # lines = recGrid(6, 4)
     curveGen(lines, flipTabs=False)
 
-def makePuzzle(radius, svg_filename):
+def makePuzzle(radius, svg_filename, size=1500):
 
     lines = penroseLines(6, maxradius=radius)
     # drawFromLines(lines)
     
 
-    file = initialize_svg(svg_filename)
-
+    file = initialize_svg(svg_filename, size=size)
 
     lines = list(lines)
     maxradius = radius - (PHI)
@@ -415,9 +406,9 @@ def makePuzzle(radius, svg_filename):
         else:
             index += 1
 
-    curveGen(lines, flipTabs=True, svg_file=file)
+    curveGen(lines, flipTabs=True, svg_file=file, size=size)
     for line in border:
-        draw_line(line[0], line[1], file)
+        draw_line(line[0], line[1], file, size=size)
     finalize_svg(file)
     drawFromLines(border)
     plt.show()
@@ -429,6 +420,7 @@ def makePuzzle(radius, svg_filename):
 # makePuzzle(17, "seventeen.svg")
 
 
+makePuzzle(radius=5, svg_filename="radius5.svg", size=700)
 
 # t0 = (0, 0)
 # t1 = (1, 1)
