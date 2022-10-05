@@ -241,7 +241,7 @@ def penroseLines(iterations = 3, maxradius = inf):
         lineList.extend(tile.getLines())
     lineSet = cleanLines(lineList)
     print(f"produced {len(tileList)/3} tiles")
-    return lineSet
+    return list(lineSet)
 
 
 if __name__ == "__main__":

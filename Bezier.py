@@ -85,7 +85,7 @@ def linear_transform(x, a, b):
 def random_puzzle(t0, t1, inseed):
     return
 
-def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None):
+def puzzleCurve(t0, t1, parameters, inseed=1, flipTabs=False, svg_file = None):
     seed(inseed)
     if flipTabs:
         if randint(0, 1):
@@ -324,11 +324,11 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
         plt.plot(region[0], region[1])
 
 
-def curveGen(lineset, flipTabs=True, svg_file = None):
+def curveGen(lineset, paramset, flipTabs=True, svg_file = None):
 
     seed = 0
-    for line in lineset:
-        puzzleCurve(line[0], line[1], seed, flipTabs=flipTabs, svg_file=svg_file)
+    for i in range(len(lineset)):
+        puzzleCurve(lineset[i][0], lineset[i][1], paramset[i], seed, flipTabs=flipTabs, svg_file=svg_file)
         seed += 1
 
     plt.rcParams["figure.figsize"] = (9, 9)
@@ -424,7 +424,27 @@ def makePuzzle(radius, svg_filename):
 
 
 
-# def uniqueness_metric(params):
+def uniqueness_metric(params):
+    '''
+    This function takes a list of vectors and returns a single value representing the 
+    "uniqueness" of the set of vectors as determined by the sum of the norms of the minkowski difference.
+    '''
+    return
+
+
+def bitwise_distribution(num_edges):
+    '''
+    This function takes a number of edges and returns a list of lists of vectors representing
+    some good ways to describe puzzle curves so that they are quite different.
+    '''
+
+    sep = (2**18-1)//num_edges # this is the number of possible vectors
+    params = []
+    for i in range(num_edges):
+        params.append(np.array(list(np.binary_repr(i*sep, width=18)), dtype=int))
+
+    return params
+
 
 # makePuzzle(17, "seventeen.svg")
 
@@ -509,7 +529,20 @@ def test6():
         parameters[i] = 0
     plt.show()
 
+# test6()
 
 
+def test7():
+    parameters = [0.5] * 18
 
-test6()
+    parameters = np.array(parameters)
+    print(f"Puzzle Parameters {parameters}")
+    puzzleCurve((0, 0), (1, 0), parameters)
+    plt.show()
+
+# test7()
+
+
+penlines = penroseLines(2, maxradius=17)
+curveGen(penlines, bitwise_distribution(len(penlines)), flipTabs=True)
+plt.show()
