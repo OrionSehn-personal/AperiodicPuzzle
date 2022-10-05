@@ -11,9 +11,8 @@ https://pomax.github.io/bezierinfo/
 """
 
 
-def bezierQuad(
-    t0, m, t1
-):  # potentially use rational bezier to give addtional degrees of variation
+def bezierQuad(t0, m, t1):  # potentially use rational bezier to give addtional degrees of variation
+    '''returns a bezier curve with 2 control points'''
     t = np.arange(0, 1.01, 0.01)
     t2 = t * t
     mt = 1 - t
@@ -24,6 +23,7 @@ def bezierQuad(
 
 
 def bezierCubic(t0, m, n, t1):
+    '''returns a bezier curve with 3 control points'''
     t = np.arange(0, 1.01, 0.01)
     t2 = t * t
     t3 = t2 * t
@@ -36,14 +36,17 @@ def bezierCubic(t0, m, n, t1):
 
 
 def xmid(pointa, pointb):
+    '''returns the x component midpoint of two points'''
     return pointb[0] - (pointb[0] - pointa[0]) / 2
 
 
 def ymid(pointa, pointb):
+    '''returns the y component midpoint of two points'''
     return pointb[1] - (pointb[1] - pointa[1]) / 2
 
 
 def rotate(x, y, theta):
+    '''rotates a point about the origin by theta'''
     xcopy = x
     ycopy = y
     x = (xcopy * np.cos(theta)) - (ycopy * np.sin(theta))  # rotate to theta
@@ -86,6 +89,19 @@ def random_puzzle(t0, t1, inseed):
     return
 
 def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None):
+    '''
+
+    puzzleCurve is a function that takes two points, t0 and t1, and generates a puzzle piece with a tab at t0 and a nub at t1.
+
+
+    :param t0: tuple of x, y coordinates of the first point
+    :param t1: tuple of x, y coordinates of the second point
+    t0, t1: the endpoints of the curve
+    inseed: the seed for the random number generator
+    parameters: a list of parameters to use for the curve
+    flipTabs: whether or not to flip the tabs
+    svg_file: the svg file to write to
+    '''
     seed(inseed)
     if flipTabs:
         if randint(0, 1):
@@ -317,7 +333,7 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
 
 
 def curveGen(lineset, flipTabs=True, svg_file = None, size=1500):
-
+    '''Generates a set of puzzle curves from a set of lines'''
     seed = 0
     for line in lineset:
         puzzleCurve(line[0], line[1], seed, flipTabs=flipTabs, svg_file=svg_file, size=size)
@@ -329,6 +345,7 @@ def curveGen(lineset, flipTabs=True, svg_file = None, size=1500):
 
 
 def recGrid(width, height):
+    '''Generates a list of lines for a rectangular grid'''
     lines = []
     # veritcal lines
     for x in range(width + 1):
