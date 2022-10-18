@@ -1,10 +1,13 @@
 from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import plotly.express as px
 from math import pi, sqrt
 from random import uniform, seed, randint
 from fibbonacciTimesFibbonacciSubstitution import *
 from write_to_svg import *
+
 
 """
 https://pomax.github.io/bezierinfo/
@@ -432,29 +435,38 @@ def makePuzzle(radius, svg_filename, size=1500):
 
 
 
-def uniqueness_metric(params):
+def minkowski_difference(params):
     '''
-    This function takes a list of vectors and returns a single value representing the 
-    "uniqueness" of the set of vectors as determined by the sum of the norms of the minkowski difference.
+    returns a list of vectors which represents the set of differences between each vector
     '''
-    netdiff = 0
+    vectors = []
     for i in range(len(params)):
-        for j in range(i+1, len(params)):
-            netdiff += np.linalg.norm(params[i] - params[j])
-    return netdiff       
+        for j in range(len(params)):
+            if i != j:
+                vectors.append(params[i] - params[j])
+    return vectors
 
-def uniqueness_metric2(params):
+def euclidean_set_difference(params):
     '''
     This function takes a list of vectors and returns a single value representing the 
     "uniqueness" of the set of vectors as determined by the sum of the norms of the minkowski difference.
     '''
-    maxdiff = 1000
+    differences = []
     for i in range(len(params)):
         for j in range(i+1, len(params)):
-            diff = np.linalg.norm(params[i] - params[j])
-            if diff < maxdiff:
-                maxdiff = diff
-    return maxdiff
+            differences.append(np.linalg.norm(params[i] - params[j]))
+    return pd.Series(differences)
+
+def hamming_set_difference(params):
+    '''
+    This function returns a list of vectors which represent the hamming difference between 
+    each vector in the set.
+    '''
+    differences = []
+    for i in range(len(params)):
+        for j in range(i+1, len(params)):
+            differences.append(np.sum(params[i] ^ params[j]))
+    return pd.Series(differences)
 
 
 def bitwise_distribution(num_edges):
@@ -484,6 +496,12 @@ def random_distribution(num_edges):
         params.append(np.array(vector))
 
     return params
+
+
+
+
+
+
 
 # makePuzzle(17, "seventeen.svg")
 
@@ -597,4 +615,25 @@ def test9():
     print(f"minimum Random distance : {uniqueness_metric2(random_distribution(256))}")
 
 
-test9()
+
+def test11():
+    size = 257
+    differences = euclidean_set_difference(random_distribution(size))
+    print(f"Euclidean stats: {differences.describe()}")
+    fig = px.histogram(differences, nbins=100, title="Euclidean distance between random distribution")
+    fig.show()
+
+    differences = euclidean_set_difference(bitwise_distribution(size))
+    print(f"Euclidean stats: {differences.describe()}")
+    fig = px.histogram(differences, nbins=100, title="Euclidean distance between Bitwise Distribution")
+    fig.show()
+
+    differences = hamming_set_difference(bitwise_distribution(size))
+    print(f"Euclidean stats: {differences.describe()}")
+    fig = px.histogram(differences, nbins=100, title="Hamming distance between Bitwise Distribution")
+    fig.show()
+
+
+
+
+test11()
