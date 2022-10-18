@@ -88,7 +88,7 @@ def linear_transform(x, a, b):
 def random_puzzle(t0, t1, inseed):
     return
 
-def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None):
+def puzzleCurve(t0, t1, parameters=[], inseed=1, flipTabs=False, svg_file = None, size = 700):
     '''
 
     puzzleCurve is a function that takes two points, t0 and t1, and generates a puzzle piece with a tab at t0 and a nub at t1.
@@ -332,11 +332,11 @@ def puzzleCurve(t0, t1, inseed=1, parameters=[], flipTabs=False, svg_file = None
         plt.plot(region[0], region[1])
 
 
-def curveGen(lineset, paramset, flipTabs=True, svg_file = None):
+def curveGen(lineset, paramset, flipTabs=True, svg_file = None, size = 700):
 
     seed = 0
     for i in range(len(lineset)):
-        puzzleCurve(lineset[i][0], lineset[i][1], paramset[i], seed, flipTabs=flipTabs, svg_file=svg_file)
+        puzzleCurve(lineset[i][0], lineset[i][1], paramset[i], seed, flipTabs=flipTabs, svg_file=svg_file, size=700)
         seed += 1
 
     plt.rcParams["figure.figsize"] = (9, 9)
@@ -437,7 +437,24 @@ def uniqueness_metric(params):
     This function takes a list of vectors and returns a single value representing the 
     "uniqueness" of the set of vectors as determined by the sum of the norms of the minkowski difference.
     '''
-    return
+    netdiff = 0
+    for i in range(len(params)):
+        for j in range(i+1, len(params)):
+            netdiff += np.linalg.norm(params[i] - params[j])
+    return netdiff       
+
+def uniqueness_metric2(params):
+    '''
+    This function takes a list of vectors and returns a single value representing the 
+    "uniqueness" of the set of vectors as determined by the sum of the norms of the minkowski difference.
+    '''
+    maxdiff = 1000
+    for i in range(len(params)):
+        for j in range(i+1, len(params)):
+            diff = np.linalg.norm(params[i] - params[j])
+            if diff < maxdiff:
+                maxdiff = diff
+    return maxdiff
 
 
 def bitwise_distribution(num_edges):
@@ -453,11 +470,25 @@ def bitwise_distribution(num_edges):
 
     return params
 
+def random_distribution(num_edges):
+    '''
+    This function takes a number of edges and returns a list of lists of vectors representing
+    some good ways to describe puzzle curves so that they are quite different.
+    '''
+
+    params = []
+    for i in range(num_edges):
+        vector = []
+        for j in range(18):
+            vector.append(uniform(0,1))
+        params.append(np.array(vector))
+
+    return params
 
 # makePuzzle(17, "seventeen.svg")
 
 
-makePuzzle(radius=5, svg_filename="radius5.svg", size=700)
+# makePuzzle(radius=5, svg_filename="radius5.svg", size=700)
 
 # t0 = (0, 0)
 # t1 = (1, 1)
@@ -550,8 +581,20 @@ def test7():
     plt.show()
 
 # test7()
+def test8():
+    penlines = penroseLines(2, maxradius=17)
+    svg_file = open("penrose.svg", "w")
+    curveGen(penlines, bitwise_distribution(len(penlines)), flipTabs=True, svg_file=svg_file, size=700)
+    svg_file.close()
+    plt.show()
+
+def test9():
+    # print(f"Bitwise distribution: {uniqueness_metric(bitwise_distribution(257))}")
+    # print(f"Random distribution: {uniqueness_metric(random_distribution(257))}")
+    print(f"Average Bitwise distance: {uniqueness_metric(bitwise_distribution(256))/(256 * 128)}")
+    print(f"Average Random distance: {uniqueness_metric(random_distribution(256))/(256 * 128)}")
+    print(f"minimum Bitwise distance: {uniqueness_metric2(bitwise_distribution(256))}")
+    print(f"minimum Random distance : {uniqueness_metric2(random_distribution(256))}")
 
 
-penlines = penroseLines(2, maxradius=17)
-curveGen(penlines, bitwise_distribution(len(penlines)), flipTabs=True)
-plt.show()
+test9()
