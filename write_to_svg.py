@@ -48,8 +48,14 @@ def draw_curve(point_list, file, size=1500):
     return
 
 
-def draw_line(p1, p2, file, size=1500):
+def draw_line(p1, p2, file, size=1):
     translation = size/2
     scaling = size/12
     file.write(f"\t<line x1=\"{((p1[0] * scaling) + translation)}\" y1=\"{((p1[1]*scaling)+translation)}\" x2=\"{((p2[0]*scaling)+translation)}\" y2=\"{((p2[1]*scaling)+translation)}\" stroke=\"black\" />\n")
     return
+
+def draw_lines(lines, file, size=1):
+    for line in lines:
+        draw_line(line[0], line[1], file, size=size)
+
+

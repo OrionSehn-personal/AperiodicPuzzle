@@ -91,7 +91,7 @@ def linear_transform(x, a, b):
 def random_puzzle(t0, t1, inseed):
     return
 
-def puzzleCurve(t0, t1, parameters=[], inseed=1, flipTabs=False, svg_file = None, size = 700):
+def puzzleCurve(t0, t1, parameters=[], inseed=1, flipTabs=False, svg_file = None, size = 700, matplotlib_plot = False):
     '''
 
     puzzleCurve is a function that takes two points, t0 and t1, and generates a puzzle piece with a tab at t0 and a nub at t1.
@@ -331,37 +331,54 @@ def puzzleCurve(t0, t1, parameters=[], inseed=1, flipTabs=False, svg_file = None
     puzzle.append((x, y))
     # plt.plot([10,0], [0, 7.26])
 
-    for region in puzzle:
-        plt.plot(region[0], region[1])
+    if matplotlib_plot:
+        for region in puzzle:   
+            plt.plot(region[0], region[1])
 
 
-def curveGen(lineset, paramset, flipTabs=True, svg_file = None, size = 700):
+def curveGen(lineset, paramset, flipTabs=True, svg_file = None, size = 700, mat_plot_lib = False):
 
     seed = 0
     for i in range(len(lineset)):
-        puzzleCurve(lineset[i][0], lineset[i][1], paramset[i], seed, flipTabs=flipTabs, svg_file=svg_file, size=700)
+        puzzleCurve(lineset[i][0], lineset[i][1], paramset[i], seed, flipTabs=flipTabs, svg_file=svg_file, size= size)
         seed += 1
 
-    plt.rcParams["figure.figsize"] = (9, 9)
-    plt.axis("equal")
-    # plt.grid()
+    if mat_plot_lib:
+        plt.rcParams["figure.figsize"] = (9, 9)
+        plt.axis("equal")
 
 
-def recGrid(width, height):
+def recGrid(width, height, scaling=0.6, translate=8):
     '''Generates a list of lines for a rectangular grid'''
     lines = []
+    border = []
     # veritcal lines
     for x in range(width + 1):
         for y in range(height):
             temp = [(x, y), ((x), y - 1)]
-            lines.append(temp)
+            if x == 0 or x == width:
+                border.append(temp)
+            else:
+                lines.append(temp)
     # horizontal lines
     for x in range(width):
         for y in range(height + 1):
             temp = [(x, y - 1), ((x + 1), y - 1)]
             shuffle(temp)
-            lines.append(temp)
-    return lines
+
+            if y == 0 or y == height:
+                border.append(temp)
+            else:
+                lines.append(temp)
+    for line in lines:
+        line[0] = ((line[0][0] - translate) * scaling, (line[0][1] - translate) * scaling)
+        line[1] = ((line[1][0] - translate) * scaling, (line[1][1] - translate) * scaling)
+        
+    for line in border:
+        line[0] = ((line[0][0] - translate) * scaling, (line[0][1] - translate) * scaling)
+        line[1] = ((line[1][0] - translate) * scaling, (line[1][1] - translate) * scaling)
+
+    return lines, border
 
 
 # lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
@@ -431,6 +448,7 @@ def makePuzzle(radius, svg_filename, size=1500):
         draw_line(line[0], line[1], file, size=size)
     finalize_svg(file)
     drawFromLines(border)
+
     plt.show()
 
 
@@ -475,10 +493,13 @@ def bitwise_distribution(num_edges):
     some good ways to describe puzzle curves so that they are quite different.
     '''
 
-    sep = (2**18-1)//num_edges # this is the number of possible vectors
+    # sep = (2**18-1)//num_edges # this is the number of possible vectors
+    sep = (2^18) - 1
     params = []
     for i in range(num_edges):
-        params.append(np.array(list(np.binary_repr(i*sep, width=18)), dtype=int))
+        binrep = np.binary_repr(i*sep, width=18)
+        # print(binrep)
+        params.append(np.array(list(binrep), dtype=int))
 
     return params
 
@@ -497,7 +518,18 @@ def random_distribution(num_edges):
 
     return params
 
+def random_unit_distribution(num_edges):
+    '''
+    function takes a number of edges and returns a list of vectors which have unit components.
+    '''
+    params = []
+    for i in range(num_edges):
+        vector = []
+        for j in range(18):
+            vector.append(randint(0,1))
+        params.append(np.array(vector)/np.linalg.norm(vector))
 
+    return params
 
 
 
@@ -617,23 +649,27 @@ def test9():
 
 
 def test11():
-    size = 257
-    differences = euclidean_set_difference(random_distribution(size))
-    print(f"Euclidean stats: {differences.describe()}")
-    fig = px.histogram(differences, nbins=100, title="Euclidean distance between random distribution")
-    fig.show()
+    size = 255
+    # differences = euclidean_set_difference(random_distribution(size))
+    # print(f"Euclidean stats: {differences.describe()}")
+    # fig = px.histogram(differences, nbins=100, title="Euclidean distance between random distribution")
+    # fig.show()
 
-    differences = euclidean_set_difference(bitwise_distribution(size))
-    print(f"Euclidean stats: {differences.describe()}")
-    fig = px.histogram(differences, nbins=100, title="Euclidean distance between Bitwise Distribution")
-    fig.show()
+    # differences = euclidean_set_difference(bitwise_distribution(size))
+    # print(f"Euclidean stats: {differences.describe()}")
+    # fig = px.histogram(differences, nbins=100, title="Euclidean distance between Bitwise Distribution")
+    # fig.show()
 
-    differences = hamming_set_difference(bitwise_distribution(size))
+    # differences = hamming_set_difference(bitwise_distribution(size))
+    # print(f"Euclidean stats: {differences.describe()}")
+    # fig = px.histogram(differences, nbins=100, title="Hamming distance between Bitwise Distribution")
+    # fig.show()
+
+    differences = hamming_set_difference(random_unit_distribution(size))
     print(f"Euclidean stats: {differences.describe()}")
     fig = px.histogram(differences, nbins=100, title="Hamming distance between Bitwise Distribution")
     fig.show()
 
 
-
-
-test11()
+if __name__ == "__main__":
+    test11()

@@ -172,9 +172,9 @@ class Tile:
 
 def cleanLines(inList):
     outList = roundLines(inList)
-    outList = removeDuplicates(outList)
+    outList, border_lines = removeDuplicates(outList)
 
-    return outList
+    return outList, border_lines
 
 
 def roundLines(inList):
@@ -191,10 +191,26 @@ def roundLines(inList):
 
 def removeDuplicates(inList):
     outLines = inList.copy()
-    for line in inList:
-        if (line[1], line[0]) in outLines:
-            outLines.remove(line)
-    return set(outLines)
+    edges = []
+    border = []
+    for line in outLines:
+        if (line[1], line[0]) in border:
+            if (line[1], line[0]) not in edges:
+                edges.append(border.pop(border.index((line[1], line[0]))))
+        elif line in border: 
+            if line not in edges:
+                edges.append(border.pop(border.index(line)))
+
+        elif line in edges:
+            pass
+
+        elif (line[1], line[0]) in edges:
+            pass
+        
+        else:
+            border.append(line)
+
+    return list(set(edges)), list(set(border))
 
 
 # def removeInverted(inList):
@@ -203,12 +219,15 @@ def removeDuplicates(inList):
 #         if (((line[1][0], line[1,1]), (line[0][0], line[0][1])) in
 
 
-def penroseLines(iterations = 3, maxradius = inf):
+def penroseLines(iterations = 3, maxradius = inf, init_scaling=0.4):
     startTile = Tile()
     tileList = [startTile]
-    for i in range(5):
+    for i in range(4):
         startTile = startTile.rotate(2 * pi / 5)
         tileList.append(startTile)
+    
+    for tile in tileList:
+        tile.inflate(init_scaling)
 
     for i in range(iterations):
         newlist = []
@@ -232,16 +251,16 @@ def penroseLines(iterations = 3, maxradius = inf):
             ):
             tileList.pop(index)
             counter -=1
-            
         else:
             index += 1
 
     lineList = []
     for tile in tileList:
         lineList.extend(tile.getLines())
-    lineSet = cleanLines(lineList)
+
+    lineSet, border_lines = cleanLines(lineList)
     print(f"produced {len(tileList)/3} tiles")
-    return list(lineSet)
+    return list(lineSet), border_lines
 
 
 if __name__ == "__main__":
