@@ -1,7 +1,4 @@
 from cmath import inf
-from tracemalloc import start
-from typing import List
-from matplotlib import lines
 import matplotlib.pyplot as plt
 import numpy as np
 from math import pi, sqrt, sin, cos

@@ -7,7 +7,7 @@ from math import pi, sqrt
 from random import uniform, seed, randint
 from fibbonacciTimesFibbonacciSubstitution import *
 from write_to_svg import *
-from scipy.optimize import minimize
+# from scipy.optimize import minimize
 
 """
 https://pomax.github.io/bezierinfo/
