@@ -7,7 +7,7 @@ from math import pi, sqrt
 from random import uniform, seed, randint
 from fibbonacciTimesFibbonacciSubstitution import *
 from write_to_svg import *
-
+from scipy.optimize import minimize
 
 """
 https://pomax.github.io/bezierinfo/
@@ -348,7 +348,7 @@ def curveGen(lineset, paramset, flipTabs=True, svg_file = None, size = 700, mat_
         plt.axis("equal")
 
 
-def recGrid(width, height, scaling=0.6, translate=8):
+def recGrid(width, height, scaling=0.6, translate=100):
     '''Generates a list of lines for a rectangular grid'''
     lines = []
     border = []
@@ -380,42 +380,45 @@ def recGrid(width, height, scaling=0.6, translate=8):
 
     return lines, border
 
+def trigrid(width, height, scaling=0.8, translate=5):
+    border = []
+    lines = []
+    init_triangle = [(0, 0), (1, 0), (0.5, 0.5 * sqrt(3))]
+    for x in range(width):
+        for y in range(height):
+            if y % 2 == 0:
+                temp = [(init_triangle[0][0] + x, init_triangle[0][1] + y*(0.5 * sqrt(3))), (init_triangle[1][0] + x, init_triangle[1][1] + y*(0.5 * sqrt(3))), (init_triangle[2][0] + x, init_triangle[2][1] + y*(0.5 * sqrt(3)))]
 
-# lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
-# lines = [[(1,0), (0, 0)]]
-# lines = [[(0,0), (10, 0)]]
-# lines = recGrid(6, 4)
-# curveGen(lines)
+                lines.append((temp[0], temp[1]))
+                lines.append((temp[1], temp[2]))
+                lines.append((temp[2], temp[0]))
+
+            else:
+                temp = [(init_triangle[0][0] + x + 0.5, init_triangle[0][1] + y*(0.5 * sqrt(3))), (init_triangle[1][0] + x + 0.5, init_triangle[1][1] + y*(0.5 * sqrt(3))), (init_triangle[2][0] + x + 0.5, init_triangle[2][1] + y*(0.5 * sqrt(3)))]
+
+                lines.append((temp[0], temp[1]))
+                lines.append((temp[1], temp[2]))
+                lines.append((temp[2], temp[0]))
 
 
-def test1():
-    lines = penroseLines(5, maxradius=17)
-    filename = "realtry.svg"
-    file = initialize_svg(filename)
-    curveGen(lines, flipTabs=False, svg_file=file)
-    finalize_svg(file)
-    # curveGen(lines, flipTabs=True)
+    line_lists = []
+    for line in lines:
+        line_lists.append(list(line))
 
+    for line in line_lists:
+        line[0] = ((line[0][0] - translate) * scaling, (line[0][1] - translate) * scaling)
+        line[1] = ((line[1][0] - translate) * scaling, (line[1][1] - translate) * scaling)
+        
+    border_lists = []
+    for line in border:
+        border_lists.append(list(line))
 
-# test1()
+    for line in border_lists:
+        line[0] = ((line[0][0] - translate) * scaling, (line[0][1] - translate) * scaling)
+        line[1] = ((line[1][0] - translate) * scaling, (line[1][1] - translate) * scaling)
 
+    return line_lists, border_lists
 
-def test2():
-    # lines = [[(0,1), (1,0)], [(1,0), (0, -1)], [(0,-1), (-1,0)], [(-1,0), (0, 1)]]
-    lines = [
-        [(0, 0), (10, 0)],
-        [(0, 0), (10, 0)],
-        [(0, 0), (10, 0)],
-        [(0, 0), (10, 0)],
-        [(0, 0), (10, 0)],
-        [(0, 0), (10, 0)],
-    ]
-
-    # lines = [[(0,0), (0,1)], [(0,1), (1, 1)], [(1,1), (1,0)], [(1,0), (0, 0)], [(0,0),(-1, 0)], [(-1, 1), (-1, 0)],[ (0, 1), (-1, 1)]]
-    # lines = [[(1,0), (0, 0)]]
-    # lines = [[(0,0), (10, 0)]]
-    # lines = recGrid(6, 4)
-    curveGen(lines, flipTabs=False)
 
 def makePuzzle(radius, svg_filename, size=1500):
 
@@ -475,6 +478,17 @@ def euclidean_set_difference(params):
             differences.append(np.linalg.norm(params[i] - params[j]))
     return pd.Series(differences)
 
+def manhattan_set_difference(params):
+    '''
+    This function takes a list of vectors and returns a single value representing the 
+    "uniqueness" of the set of vectors as determined by the sum of the norms of the minkowski difference.
+    '''
+    differences = []
+    for i in range(len(params)):
+        for j in range(i+1, len(params)):
+            differences.append(np.linalg.norm(params[i] - params[j], ord=1))
+    return pd.Series(differences)
+
 def hamming_set_difference(params):
     '''
     This function returns a list of vectors which represent the hamming difference between 
@@ -527,42 +541,48 @@ def random_unit_distribution(num_edges):
         vector = []
         for j in range(18):
             vector.append(randint(0,1))
-        params.append(np.array(vector)/np.linalg.norm(vector))
+        params.append(np.array(vector))
 
     return params
 
+def array_hamming_distance(array, n):
+    # print((array))
+    # print("len array: ", len(array))
+    total_distance = 0
+    for i in range(0, (len(array)), n):
+        # print("i: ", i)
+        for j in range(i+n, (len(array)), n):
+            # print("j: ", j)
+            # total_distance += np.sum(array[i:i+n] ^ array[j:j+n])
+            vector1 = array[i:i+n]
+            vector2 = array[j:j+n]
+            for k in range(n):
+                if vector1[k] != vector2[k]:
+                    total_distance += 1
+            # total_distance += 1
+            # print("vector1, vector2: ", array[i:i+n], array[j:j+n])
+            # print("added distance: ", np.sum(array[i:i+n] ^ array[j:j+n]))
+# 
+    # print(total_distance)
+    # print()
+    return -total_distance
+
+
+def test0():
+    print(array_hamming_distance(np.array([0, 0, 0, 1]), 2))
+    print(array_hamming_distance(np.array([0, 0, 0, 1, 0, 0]), 2))
+    print(array_hamming_distance(np.array([0,0,0, 0,1,1]), 3))
+
+    print(array_hamming_distance(np.array([0,0, 0,1, 1,0]), 2))
+    
+    x0 = np.array([0, 0, 0, 1, 1, 0])
+    # bounds = [(0,1)]*6
+    # res = minimize(array_hamming_distance, x0, args=(2,), method='CG', options={'disp': True}, iter)
+    
+    # print(res.x)
 
 
 
-
-# makePuzzle(17, "seventeen.svg")
-
-
-# makePuzzle(radius=5, svg_filename="radius5.svg", size=700)
-
-# t0 = (0, 0)
-# t1 = (1, 1)
-# x, y = bezierQuad(t0, (t1[1]/3, t1[1]) ,   t1)
-# a = np.arange(0, 1, 0.01)
-# b = np.empty(100)
-# b.fill(1)
-# plt.plot(x, y, color="blue")
-# plt.plot(a, b, linestyle="dashed", color="orange")
-
-# plt.plot(0, 0, marker="o", color="orange")
-# plt.plot(t1[1]/3, t1[1], marker="o", color="blue")
-# plt.plot(1, 1, marker="o", color="orange")
-
-# x, y = bezierQuad(t0, (t1[1]/2, t1[1]) ,   t1)
-# plt.plot(x, y, color="red")
-# plt.plot(t1[1]/2, t1[1], marker="o", color="red")
-
-
-# x, y = bezierQuad(t0, (t1[1]/8, t1[1]) ,   t1)
-# plt.plot(x, y, color="green")
-# plt.plot(t1[1]/8, t1[1], marker="o", color="green")
-
-# plt.show()
 
 
 # def test3():
@@ -672,4 +692,8 @@ def test11():
 
 
 if __name__ == "__main__":
-    test11()
+    # test0()
+    figlines, border = trigrid(5, 5, 1, 0)
+    drawFromLines(figlines)
+    drawFromLines(border)
+    
